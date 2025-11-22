@@ -1,7 +1,7 @@
 ---
 title: "Menominee Preverb Ordering Revisited"
 collection: publications
-category: conference paper
+category: Conference Paper
 permalink: /publication/2025-06-01-menominee-preverb
 excerpt: 'This paper is about the ordering of preverbs in the Indigenous Menominee language.'
 date: 2025-06-01
