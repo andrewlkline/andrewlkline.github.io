@@ -1,4 +1,4 @@
----
+<img width="468" height="10" alt="image" src="https://github.com/user-attachments/assets/7934e6b5-a64c-4b9a-822d-a800cffd56b7" />---
 layout: archive
 title: "CV"
 permalink: /cv/
@@ -11,35 +11,29 @@ redirect_from:
 
 Education
 ======
-* Ph.D in Version Control Theory, GitHub University, 2018 (expected)
-* M.S. in Jekyll, GitHub University, 2014
-* B.S. in GitHub, GitHub University, 2012
+* Ph.D in Linguistics, University of Hawai'i at Mānoa, 2026-Present
+* M.A. in Linguistics, University of Hawai'i at Mānoa, en route
+* B.A. in Linguistics & Certificate in Middle Eastern Studies, University of Wisconsin-Madison, 2020-2023
 
 Work experience
 ======
-* Spring 2024: Academic Pages Collaborator
-  * GitHub University
-  * Duties includes: Updates and improvements to template
-  * Supervisor: The Users
+* Spring 2026: Graduate Assistant
+  * University of Hawai'i at Mānoa
 
-* Fall 2015: Research Assistant
-  * GitHub University
-  * Duties included: Merging pull requests
-  * Supervisor: Professor Hub
-
-* Summer 2015: Research Assistant
-  * GitHub University
-  * Duties included: Tagging issues
-  * Supervisor: Professor Git
+* Oct 2021-May 2023: Undergraduate Researcher
+  * University of Wisconsin-Madison
+  * Wisconsin Indigenous Language Lab
+  * Supervisor: Dr. Monica Macaulay
   
-Skills
+Languages
 ======
-* Skill 1
-* Skill 2
-  * Sub-skill 2.1
-  * Sub-skill 2.2
-  * Sub-skill 2.3
-* Skill 3
+* German - Intermediate
+* Arabic (Modern Standard) - Advanced
+  * Arabic (South Levantine) - Intermediate
+* Tetun - Advanced High (tested by Peace Corps LPI)
+* Kairui-Midiki - Advanced Low (tested by Peace Corps LPI)
+* Waimoa - Intermediate
+* Makasae - Intermediate
 
 Publications
 ======
