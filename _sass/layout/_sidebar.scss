@@ -94,8 +94,10 @@
   }
 
   img {
-    max-width: 175px;
-    border-radius: 50%;
+    width: 175px;        /* Forces a fixed width */
+    height: 175px;       /* Forces the same height so it is a square */
+    object-fit: cover;   /* Crops the photo so you don't look squished */
+    border-radius: 50%;  /* Makes the square into a circle */
 
     @include breakpoint($large) {
       padding: 5px;
