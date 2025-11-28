@@ -6,7 +6,6 @@ author_profile: true
 redirect_from:
   - /resume
 ---
-<img width="468" height="10" alt="image" src="https://github.com/user-attachments/assets/7934e6b5-a64c-4b9a-822d-a800cffd56b7" />
 
 {% include base_path %}
 
