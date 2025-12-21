@@ -2,6 +2,8 @@
 permalink: /
 title: "Andrew Kline"
 author_profile: true
+lang: en
+translation: /tet/
 redirect_from: 
   - /about/
   - /about.html

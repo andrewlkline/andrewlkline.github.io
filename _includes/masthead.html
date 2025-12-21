@@ -7,7 +7,12 @@
         <button><span class="navicon"></span></button>
         <ul class="visible-links">
           <li class="masthead__menu-item masthead__menu-item--lg persist"><a href="{{ base_path }}/">{{ site.title }}</a></li>
-          {% for link in site.data.navigation.main %}
+          {% if page.lang == 'tet' %}
+            {% assign nav_links = site.data.navigation.main_tet %}
+          {% else %}
+            {% assign nav_links = site.data.navigation.main %}
+          {% endif %}
+          {% for link in nav_links %}
             {% if link.url contains 'http' %}
               {% assign domain = '' %}
             {% else %}
@@ -16,6 +21,15 @@
             <li class="masthead__menu-item"><a href="{{ domain }}{{ link.url }}">{{ link.title }}</a></li>
           {% endfor %}
           
+          {% if page.lang == 'tet' %}
+             <li class="masthead__menu-item">
+               <a href="{{ base_path }}{{ page.translation | default: '/' }}">English</a>
+             </li>
+          {% else %}
+             <li class="masthead__menu-item">
+               <a href="{{ base_path }}{{ page.translation | default: '/tet/' }}">Tetun</a>
+             </li>
+          {% endif %}
         </ul>
         <ul class="hidden-links hidden"></ul>
       </nav>
