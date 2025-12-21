@@ -350,5 +350,10 @@ zh-HK: &DEFAULT_ZH_HK
 zh-TW:
   <<: *DEFAULT_ZH_HK
 
+# Tetun
+# --------------
+tet:
+  <<: *DEFAULT_EN
+
 # Another locale
 # --------------

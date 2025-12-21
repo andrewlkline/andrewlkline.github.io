@@ -19,3 +19,13 @@ main:
     
   # - title: "CV"
   #   url: /cv-json/
+
+main_tet:
+  - title: "Publications"
+    url: /tet/publications/
+
+  - title: "Blog Posts"
+    url: https://andykline.substack.com
+
+  - title: "CV"
+    url: /tet/cv/
