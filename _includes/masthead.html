@@ -21,18 +21,20 @@
             <li class="masthead__menu-item"><a href="{{ domain }}{{ link.url }}">{{ link.title }}</a></li>
           {% endfor %}
           
-          {% if page.lang == 'tet' %}
-             <li class="masthead__menu-item">
-               <a href="{{ base_path }}{{ page.translation | default: '/' }}">English</a>
-             </li>
-          {% else %}
-             <li class="masthead__menu-item">
-               <a href="{{ base_path }}{{ page.translation | default: '/tet/' }}">Tetun</a>
-             </li>
-          {% endif %}
         </ul>
         <ul class="hidden-links hidden"></ul>
       </nav>
+    </div>
+    <div class="masthead__language-switcher">
+      {% if page.lang == 'tet' %}
+        <a href="{{ base_path }}{{ page.translation | default: '/' }}" title="Switch to English">
+          <img src="{{ base_path }}/images/flag-us.svg" alt="English" style="height: 14px; width: auto; vertical-align: middle;">
+        </a>
+      {% else %}
+        <a href="{{ base_path }}{{ page.translation | default: '/tet/' }}" title="Switch to Tetun">
+          <img src="{{ base_path }}/images/flag-tl.svg" alt="Tetun" style="height: 14px; width: auto; vertical-align: middle;">
+        </a>
+      {% endif %}
     </div>
   </div>
 </div>
