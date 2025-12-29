@@ -17,8 +17,10 @@ Education
 
 Work experience
 ======
-* Spring 2026: Graduate Assistant
+* Spring 2026: Research Assistant
   * University of Hawai'i at Mānoa
+  * Assisted Dr. Leah Pappas with an ELDP project to document the Saparua language, which is spoken in Central Maluku (Collaborative documentation and description of Saparua: An endangered language of Maluku). My tasks spanned data processing, analysis, and resource creation using ELAN, FLEx, and archival platforms.
+
 
 * Oct 2021-May 2023: Undergraduate Researcher
   * University of Wisconsin-Madison
