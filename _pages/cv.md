@@ -9,6 +9,8 @@ redirect_from:
 
 {% include base_path %}
 
+[Download my updated CV here](/files/Andrew_Kline_CV.pdf)
+
 Education
 ======
 * Ph.D in Linguistics, University of Hawai'i at Mānoa, 2026-Present
