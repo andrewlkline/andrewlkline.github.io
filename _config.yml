@@ -26,13 +26,14 @@ author:
   avatar           : "profile.JPG"
   name             : "Andrew Kline"
   pronouns         : # example: "he/him"  
-  bio              : "RPCV Timor-Leste & Linguistics PhD Student at UH Mānoa"
-  location         : "Timor-Leste"
+  bio              : "Linguistics PhD Student at UH Mānoa & RPCV Timor-Leste"
+  location         : "O‘ahu, Hawaiʻi"
   employer         : "University of Hawai'i at Mānoa"
   email            : "klineal@hawaii.edu" 
 
   # Academic websites like researchgat etc.
-
+  orcid            : "https://orcid.org/0009-0003-2895-2126"
+  googlescholar    : "https://scholar.google.com/citations?user=u6OPEDUAAAAJ&hl=en"
 
   # Repositories and software development like github etc.
   
