@@ -94,12 +94,14 @@
   }
 
   img {
-    width: 175px;        /* Forces a fixed width */
-    height: 175px;       /* Forces the same height so it is a square */
+    width: 36px;
+    height: 36px;
     object-fit: cover;   /* Crops the photo so you don't look squished */
     border-radius: 50%;  /* Makes the square into a circle */
 
     @include breakpoint($large) {
+      width: 175px;        /* Forces a fixed width */
+      height: 175px;       /* Forces the same height so it is a square */
       padding: 5px;
       border: 1px solid var(--global-border-color);
     }
