@@ -188,8 +188,37 @@
     </nav>
 
     <header class="hero" style="display: flex; align-items: center; justify-content: center; text-align: left; gap: 30px; padding: 3rem 1rem; flex-wrap: wrap;">
+
+    <div style="
+    width: 150px;     /* Total width including border */
+    height: 150px;    /* Total height including border */
+    border-radius: 50%;
     
-    <img src="andrew_kline_photo.jpeg" alt="Andrew Kline" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 4px solid #024731; flex-shrink: 0;">
+    /* This padding defines how thick the Tais border is */
+    padding: 8px;     
+    
+    /* The Tais Pattern Background */
+    background-image: url('tais.jpeg');
+    background-size: cover;
+    background-position: center;
+    
+    /* Ensures it doesn't shrink on mobile */
+    flex-shrink: 0; 
+    
+    /* Optional: Adds a little shadow so the border pops off the page */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15); 
+">
+    <img src="andrew_kline_photo.jpeg" alt="Andrew Kline" style="
+        width: 100%; 
+        height: 100%; 
+        border-radius: 50%; 
+        object-fit: cover;
+        display: block; /* Important for alignment */
+
+    ">
+</div>
+    
+    <!-- no tais border profile foto <img src="andrew_kline_photo.jpeg" alt="Andrew Kline" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 4px solid #024731; flex-shrink: 0;">  -->
     
     <div>
         <h1 style="margin: 0; line-height: 1.2;">Andrew Kline</h1>
