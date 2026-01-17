@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timor-Leste Language Resources | Andrew Kline</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Merriweather:wght@300;400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root {
+            /* UH Manoa Brand Colors */
+            --uh-green: #024731; 
+            --uh-silver: #C8C8C8;
+            --text-dark: #333;
+            --bg-light: #f9f9f9;
+        }
+
+        body {
+            font-family: 'Merriweather', serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-light);
+        }
+
+        /* Typography */
+        h1, h2, h3, h4 {
+            font-family: 'Lato', sans-serif;
+            font-weight: 700;
+            color: var(--uh-green);
+        }
+
+        a {
+            text-decoration: none;
+            color: var(--uh-green);
+            transition: 0.3s;
+        }
+
+        a:hover {
+            color: #000;
+        }
+
+        /* Navigation */
+        nav {
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+        }
+
+        .nav-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            font-family: 'Lato', sans-serif;
+        }
+
+        .nav-links a {
+            margin-left: 20px;
+            font-family: 'Lato', sans-serif;
+            font-size: 0.95rem;
+            color: #555;
+        }
+
+        .nav-links a:hover {
+            color: var(--uh-green);
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 1rem 1rem;
+            background-color: white;
+            border-bottom: 1px solid #eee;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: #666;
+            font-family: 'Lato', sans-serif;
+        }
+
+        /* Content Container */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+/* The Wiki Layout */
+        .wiki-container {
+            display: flex;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+            gap: 40px;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            flex: 1;
+            position: sticky; /* Keeps it visible while scrolling */
+            top: 2rem;
+            height: fit-content;
+            border-right: 1px solid #ddd;
+            padding-right: 20px;
+        }
+
+        .sidebar h4 { margin-top: 0; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; color: #888; }
+        .sidebar ul { list-style: none; padding: 0; }
+        .sidebar li { margin-bottom: 10px; }
+        .sidebar a { color: #555; font-family: 'Lato', sans-serif; font-size: 0.95rem; }
+        .sidebar a:hover { color: #024731; font-weight: bold; }
+
+        /* Main Content */
+        .content { flex: 3; }
+        
+        /* Citation Cards */
+        .citation {
+            background: #f9f9f9;
+            padding: 1.5rem;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #024731;
+        }
+        
+        .citation-title { font-weight: bold; display: block; margin-bottom: 5px; }
+        .citation-meta { font-style: italic; font-size: 0.9rem; color: #666; }
+        .citation-note { margin-top: 10px; font-size: 0.95rem; }
+        
+        /* Tag styling */
+        .tag {
+            display: inline-block;
+            background: #e0e0e0;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-family: 'Lato', sans-serif;
+            margin-right: 5px;
+            color: #333;
+        }
+        
+        /* Mobile adjustment */
+        @media (max-width: 768px) {
+            .wiki-container { flex-direction: column; }
+            .sidebar { position: static; border-right: none; border-bottom: 1px solid #ddd; padding-bottom: 20px; }
+        }
+
+        /* Language Family Badges */
+.family-badge {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    color: white;
+    vertical-align: middle;
+    margin-left: 10px;
+    font-weight: bold;
+}
+
+/* Specific Colors */
+.austronesian { background-color: #0077b6; /* Ocean Blue */ }
+.papuan { background-color: #e07a5f; /* Terra Cotta / Earthy Orange */ }
+
+/* Update the Sidebar to handle sub-groups */
+.sidebar h5 {
+    margin: 20px 0 10px 0;
+    font-size: 0.8rem;
+    color: #333;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 5px;
+}
+
+        /* Button Styling */
+        .btn {
+            display: inline-block;
+            background-color: var(--uh-green);
+            color: white !important;
+            padding: 10px 20px;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-family: 'Lato', sans-serif;
+            font-size: 0.9rem;
+        }
+
+        .btn:hover {
+            background-color: #033524;
+        }
+
+        /* Contact / Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background-color: var(--uh-green);
+            color: white;
+            font-family: 'Lato', sans-serif;
+            border-top: 50px solid transparent;
+            border-image: url('tais.jpeg') 100 round;
+        }
+
+        .contact-links {
+            margin-top: 1rem;
+        }
+
+        .contact-links a {
+            color: white;
+            margin: 0 15px;
+            font-size: 1.5rem;
+        }
+
+        .contact-links a:hover {
+            color: var(--uh-silver);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 2rem; }
+            nav { flex-direction: column; }
+            .nav-links { margin-top: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="nav-brand">Andrew Kline</div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/publications/">Publications</a>
+            <a href="../andrew_kline_cv.pdf">CV</a>
+        </div>
+    </nav>
+
+
+    
+<div class="wiki-container">
+        
+        <aside class="sidebar">
+            <h4>Browse by Family</h4>
+
+            <h5> Austronesian</h5>
+            <h6>Central Timor</h6>
+            <ul>
+                <li><a href="#mambai">Mambai</a></li>
+                <li><a href="#kemak">Kemak</a></li>
+                <li><a href="#tokodede">Tokodede</a></li>
+                <li><a href="#welaun">Welaun</a></li>
+            </ul>
+            <h6>Timor-Babar</h6>
+            <ul>
+                <li><a href="#waima'a">Waima'a</a></li>
+                <li><a href="#naueti">Naueti</a></li>
+                <li><a href="#kairui-midiki">Kairui-Midiki</a></li>
+                <li><a href="#tetun">Tetun</a></li>
+                <li><a href="#habun">Habun</a></li>
+                <li><a href="#idate">Idaté</a></li>
+                <li><a href="#lakalei">Lakalei</a></li>
+                <li><a href="#galolen">Galolen</a></li>
+                <li><a href="#dadu'a">Dadu'a</a></li>
+                <li><a href="#atauran">Atauran</a></li>
+                <li><a href="#makuva">Makuva</a></li>
+            </ul>
+            <h5> non-Austronesian (Papuan) </h5>
+            <ul>
+                <li><a href="#bunak">Bunak</a></li>
+                <li><a href="#makasae">Makasae</a></li>
+                <li><a href="#makalero">Makalero</a></li>
+                <li><a href="#fataluku">Fataluku</a></li>
+
+        </aside>
+        
+       <main class="content">
+        <h1>Timor-Leste Language Resources</h1>
+        <p>A curated bibliography of the Austronesian and non-Austronesian (Timor-Alor-Pantar) languages of Timor-Leste sorted by language family.<br>Are you a researcher with a resource to add? Email me at <a href="mailto:klineal@hawaii.edu">klineal@hawaii.edu</a>
+ </p>
+        <hr>
+
+        <h2 style="color: #0077b6; margin-top: 2rem;">Austronesian Languages</h2>
+        
+        <section id="midiki">
+            <h3>Midiki <span class="family-badge austronesian">Austronesian</span></h3>
+            <div class="citation">
+                <span class="citation-title">The Languages of East Timor</span>
+                <span class="citation-meta">Hull, Geoffrey (2002)</span>
+                </div>
+        </section>
+
+        <h2 style="color: #e07a5f; margin-top: 3rem; border-top: 1px solid #eee; padding-top: 2rem;">non-Austronesian (Timor-Alor-Pantar)</h2>
+        
+        <section id="makasae">
+            <h3>Makasae <span class="family-badge papuan">Papuan</span></h3>
+            <div class="citation">
+                <span class="citation-title">First steps towards a grammar of Makasae: a language of East Timor</span>
+                <span class="citation-meta">Huber, Juliette (2008)</span>
+                <p class="citation-note">
+                    <span class="tag">MA Dissertation</span>
+                    Sketch grammar of Makasae based on the variety spoken in the subdistrict of Ossu, Viqueque district (southern Makasae).
+                </p>
+            </div>
+            <div class="citation">
+                <span class="citation-title">Describing Makasae : a trans-New Guinea language of East Timor</span>
+                <span class="citation-meta">Correia, Aderito (2011)</span>
+                <p class="citation-note">
+                    <span class="tag">Dissertation</span>
+                    Grammar of Makasae writen by Timorese linguist Aderito Correia as his dissertation at Western Sydney University, based on the author's native variety of Makasae spoken in the subdistrict of Laga, Baucau district.
+                </p>
+            </div>
+        </section>
+
+    </main>
+</div>
+    </div>
+
+    <footer>
+        <p>Andrew Kline &copy; 2026</p>
+        <div class="contact-links">
+            <a href="mailto:klineal@hawaii.edu" title="Email Me"><i class="fas fa-envelope"></i></a>
+            
+            <a href="https://orcid.org/0009-0003-2895-2126" target="_blank" title="ORCID">
+                <i class="fab fa-orcid"></i>
+            </a>
+            
+            <a href="https://scholar.google.com/citations?user=u6OPEDUAAAAJ&hl=en" target="_blank" title="Google Scholar">
+                <i class="fas fa-graduation-cap"></i>
+            </a>
+        </div>
+    </footer>
+
+</body>
+</html>
