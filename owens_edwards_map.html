@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Austronesian & Papuan Languages of Eastern Indonesia & Timor-Leste</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<style>
+  /* --- CSS Variables for Theming --- */
+  :root {
+    --bg-body: #1a1a2e;
+    --bg-header: #16213e;
+    --border-color: #0f3460;
+    --text-main: #eee;
+    --text-muted: #94a3b8;
+    --input-bg: #1a1a2e;
+    --legend-bg: rgba(22,33,62,0.95);
+    --hover-bg: rgba(255,255,255,0.05);
+  }
+
+  /* Light Mode Overrides */
+  body.light-mode {
+    --bg-body: #f1f5f9;
+    --bg-header: #ffffff;
+    --border-color: #cbd5e1;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --input-bg: #f8fafc;
+    --legend-bg: rgba(255,255,255,0.95);
+    --hover-bg: rgba(0,0,0,0.05);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', sans-serif; background: var(--bg-body); color: var(--text-main); height: 100vh; display: flex; flex-direction: column; transition: background 0.3s, color 0.3s; }
+  
+  #header { padding: 10px 16px; background: var(--bg-header); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 16px; flex-wrap: wrap; transition: background 0.3s, border-color 0.3s; }
+  #header h1 { font-size: 15px; font-weight: 600; color: var(--text-main); flex: 1; min-width: 200px; }
+  
+  #search {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background: var(--input-bg);
+    color: var(--text-main);
+    font-size: 13px;
+    outline: none;
+    min-width: 250px;
+    transition: all 0.2s;
+  }
+  #search::placeholder { color: var(--text-muted); }
+  #search:focus { border-color: #3b82f6; }
+
+  /* Theme Toggle Button */
+  #theme-toggle {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background: var(--input-bg);
+    color: var(--text-main);
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  #theme-toggle:hover { background: var(--hover-bg); }
+
+  #count { font-size: 12px; color: var(--text-muted); white-space: nowrap; }
+  #map { flex: 1; z-index: 1; }
+  
+  #legend { position: absolute; bottom: 24px; right: 10px; z-index: 1000; background: var(--legend-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px 14px; max-height: 70vh; overflow-y: auto; min-width: 200px; transition: background 0.3s, border-color 0.3s; }
+  #legend h3 { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+  
+  .legend-item { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; cursor: pointer; padding: 2px 4px; border-radius: 4px; }
+  .legend-item:hover { background: var(--hover-bg); }
+  .legend-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; border: 1px solid rgba(100,100,100,0.3); }
+  .legend-label { font-size: 11px; color: var(--text-main); }
+  .legend-count { font-size: 10px; color: var(--text-muted); margin-left: auto; }
+  
+  /* Popup Styles */
+  .leaflet-popup-content-wrapper { background: var(--bg-header); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 8px; }
+  .leaflet-popup-tip { background: var(--bg-header); border: 1px solid var(--border-color); border-top: none; border-left: none; }
+  .popup-title { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+  .popup-family { font-size: 11px; padding: 2px 8px; border-radius: 12px; display: inline-block; margin-bottom: 6px; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+  .popup-row { font-size: 11px; color: var(--text-muted); margin: 2px 0; }
+  .popup-row span { color: var(--text-main); }
+</style>
+</head>
+<body>
+<div id="header">
+  <h1>Austronesian &amp; Papuan Languages of Eastern Indonesia &amp; Timor-Leste</h1>
+  <input type="text" id="search" placeholder="Search language, family, or ISO..." autocomplete="off"/>
+  <button id="theme-toggle">☀ Light Mode</button>
+  <div id="count"></div>
+</div>
+<div id="map"></div>
+<div id="legend"><h3>Language Families</h3><div id="legend-items"></div></div>
+
+<script>
+const FAMILIES = {
+  "Bima-Lembata": "#e74c3c",
+  "Timor-Babar": "#e67e22",
+  "Central Timor": "#f1c40f",
+  "Aru": "#2ecc71",
+  "Taliabu (Celebic)": "#1abc9c",
+  "Sula-Buru": "#3498db",
+  "Ambon-Seram": "#9b59b6",
+  "Seram-Tanimbar-Bomberai": "#e91e63",
+  "Banda isolate": "#ff5722",
+  "SHWNG": "#00bcd4",
+  "Sulawesi – Celebic": "#8bc34a",
+  "Sulawesi – Sangir": "#cddc39",
+  "Sulawesi – Minahasan": "#ffc107",
+  "Sulawesi – Gorontalo-Mongondow": "#ff9800",
+  "Sulawesi – Toli-toli": "#795548",
+  "Sulawesi – South": "#607d8b",
+  "Other Austronesian": "#9e9e9e",
+  "Papuan – Greater West Bomberai": "#f06292",
+  "Papuan – North Halmahera": "#ba68c8",
+  "Papuan – Other": "#4db6ac"
+};
+
+const languages = [
+  // A.1 Bima-Lembata
+  {name:"Sanggar",lat:-8.38,lng:118.18,family:"Bima-Lembata",iso:"---"},
+  {name:"Bima (Mbojo)",lat:-8.57,lng:118.46,family:"Bima-Lembata",iso:"bhp"},
+  {name:"Kolo",lat:-8.5,lng:118.73,family:"Bima-Lembata",iso:"---"},
+  {name:"Toloweri",lat:-8.49,lng:118.82,family:"Bima-Lembata",iso:"---"},
+  {name:"Rajong",lat:-8.65,lng:120.84,family:"Bima-Lembata",iso:"rjg"},
+  {name:"Manus",lat:-8.68,lng:120.73,family:"Bima-Lembata",iso:"---"},
+  {name:"Namut",lat:-8.58,lng:120.98,family:"Bima-Lembata",iso:"---"},
+  {name:"Komodo",lat:-8.58,lng:119.44,family:"Bima-Lembata",iso:"kvh"},
+  {name:"Manggarai",lat:-8.56,lng:120.33,family:"Bima-Lembata",iso:"mqy"},
+  {name:"W. Manggarai",lat:-8.65,lng:120.0,family:"Bima-Lembata",iso:"mqy"},
+  {name:"WC. Manggarai",lat:-8.48,lng:120.23,family:"Bima-Lembata",iso:"mqy"},
+  {name:"C. Manggarai",lat:-8.59,lng:120.49,family:"Bima-Lembata",iso:"mqy"},
+  {name:"E. Manggarai",lat:-8.49,lng:120.72,family:"Bima-Lembata",iso:"mqy"},
+  {name:"Riung",lat:-8.51,lng:121.06,family:"Bima-Lembata",iso:"riu"},
+  {name:"Kepo'",lat:-8.6,lng:120.78,family:"Bima-Lembata",iso:"kuk"},
+  {name:"Waerana",lat:-8.76,lng:120.8,family:"Bima-Lembata",iso:"wrx"},
+  {name:"Rembong",lat:-8.51,lng:120.89,family:"Bima-Lembata",iso:"reb"},
+  {name:"Rongga",lat:-8.85,lng:120.7,family:"Bima-Lembata",iso:"ror"},
+  {name:"Ngadha",lat:-8.78,lng:120.93,family:"Bima-Lembata",iso:"nxg"},
+  {name:"So'a",lat:-8.69,lng:121.06,family:"Bima-Lembata",iso:"ssq"},
+  {name:"E. Ngadha",lat:-8.84,lng:121.07,family:"Bima-Lembata",iso:"nea"},
+  {name:"E. Nage",lat:-8.65,lng:121.27,family:"Bima-Lembata",iso:"nxe"},
+  {name:"C. Nage",lat:-8.71,lng:121.19,family:"Bima-Lembata",iso:"nxe"},
+  {name:"Nga'o (Oja)",lat:-8.69,lng:121.44,family:"Bima-Lembata",iso:"---"},
+  {name:"Nga'o (Watumite)",lat:-8.72,lng:121.41,family:"Bima-Lembata",iso:"---"},
+  {name:"Keo",lat:-8.87,lng:121.26,family:"Bima-Lembata",iso:"xxk"},
+  {name:"Ende",lat:-8.71,lng:121.56,family:"Bima-Lembata",iso:"end"},
+  {name:"Lio",lat:-8.69,lng:121.83,family:"Bima-Lembata",iso:"ljl"},
+  {name:"Palu'e",lat:-8.33,lng:121.72,family:"Bima-Lembata",iso:"ple"},
+  {name:"Sika",lat:-8.67,lng:122.38,family:"Bima-Lembata",iso:"ski"},
+  {name:"Sika (Hewa)",lat:-8.59,lng:122.71,family:"Bima-Lembata",iso:"ski"},
+  {name:"Pukaunu",lat:-8.43,lng:122.71,family:"Bima-Lembata",iso:"---"},
+  {name:"Ile Mandiri",lat:-8.34,lng:122.86,family:"Bima-Lembata",iso:"slp"},
+  {name:"Lewotobi",lat:-8.54,lng:122.77,family:"Bima-Lembata",iso:"lwt"},
+  {name:"Solor Lamaholot",lat:-8.54,lng:122.93,family:"Bima-Lembata",iso:"slp"},
+  {name:"Adonara Lamaholot",lat:-8.32,lng:123.16,family:"Bima-Lembata",iso:"adr"},
+  {name:"Ile Ape Lamaholot",lat:-8.29,lng:123.48,family:"Bima-Lembata",iso:"ila"},
+  {name:"Kawela",lat:-8.45,lng:123.32,family:"Bima-Lembata",iso:"lmr"},
+  {name:"Lebatukan",lat:-8.38,lng:123.46,family:"Bima-Lembata",iso:"lmr"},
+  {name:"Lamalera",lat:-8.53,lng:123.44,family:"Bima-Lembata",iso:"lmr"},
+  {name:"Alorese",lat:-8.2,lng:124.26,family:"Bima-Lembata",iso:"aol"},
+  {name:"Mingar",lat:-8.53,lng:123.23,family:"Bima-Lembata",iso:"lmj"},
+  {name:"Labalekan",lat:-8.52,lng:123.39,family:"Bima-Lembata",iso:"lmj"},
+  {name:"Lewokukun",lat:-8.42,lng:123.43,family:"Bima-Lembata",iso:"lvu"},
+  {name:"Kalikasa",lat:-8.47,lng:123.44,family:"Bima-Lembata",iso:"lvu"},
+  {name:"Levuka",lat:-8.53,lng:123.41,family:"Bima-Lembata",iso:"lvu"},
+  {name:"Painara",lat:-8.5,lng:123.53,family:"Bima-Lembata",iso:"lmf"},
+  {name:"Lamatuka",lat:-8.39,lng:123.59,family:"Bima-Lembata",iso:"lmq"},
+  {name:"Lewo Eleng",lat:-8.36,lng:123.65,family:"Bima-Lembata",iso:"lwe"},
+  {name:"Kedang",lat:-8.23,lng:123.77,family:"Bima-Lembata",iso:"ksx"},
+  {name:"Kodi",lat:-9.58,lng:119.04,family:"Bima-Lembata",iso:"kod"},
+  {name:"Gaura",lat:-9.71,lng:119.21,family:"Bima-Lembata",iso:"kod"},
+  {name:"Laboya",lat:-9.72,lng:119.34,family:"Bima-Lembata",iso:"lmy"},
+  {name:"Bukambero",lat:-9.44,lng:119.1,family:"Bima-Lembata",iso:"---"},
+  {name:"Loura",lat:-9.41,lng:119.28,family:"Bima-Lembata",iso:"lur"},
+  {name:"Tana Righu",lat:-9.47,lng:119.41,family:"Bima-Lembata",iso:"---"},
+  {name:"Weyewa",lat:-9.53,lng:119.28,family:"Bima-Lembata",iso:"wew"},
+  {name:"S. Weyewa",lat:-9.61,lng:119.2,family:"Bima-Lembata",iso:"wew"},
+  {name:"Waibangga",lat:-9.56,lng:119.45,family:"Bima-Lembata",iso:"---"},
+  {name:"Loli",lat:-9.62,lng:119.43,family:"Bima-Lembata",iso:"---"},
+  {name:"Mamboru",lat:-9.42,lng:119.53,family:"Bima-Lembata",iso:"mvd"},
+  {name:"Pondok",lat:-9.55,lng:119.5,family:"Bima-Lembata",iso:"---"},
+  {name:"Baliledo",lat:-9.52,lng:119.55,family:"Bima-Lembata",iso:"---"},
+  {name:"Wanukaka",lat:-9.72,lng:119.46,family:"Bima-Lembata",iso:"wnk"},
+  {name:"Anakalang",lat:-9.65,lng:119.54,family:"Bima-Lembata",iso:"akg"},
+  {name:"Mangili",lat:-10.17,lng:120.61,family:"Bima-Lembata",iso:"xbr"},
+  {name:"Maderi",lat:-9.48,lng:119.6,family:"Bima-Lembata",iso:"xbr"},
+  {name:"Praiwatana",lat:-9.56,lng:119.61,family:"Bima-Lembata",iso:"xbr"},
+  {name:"Umbu Ratu Nggai",lat:-9.59,lng:119.73,family:"Bima-Lembata",iso:"xbr"},
+  {name:"Lewa-Tidas",lat:-9.78,lng:119.88,family:"Bima-Lembata",iso:"xbr"},
+  {name:"Hahar",lat:-9.48,lng:119.99,family:"Bima-Lembata",iso:"xbr"},
+  {name:"Prai Paha",lat:-9.65,lng:120.03,family:"Bima-Lembata",iso:"xbr"},
+  {name:"Kanatang-Kapunduk",lat:-9.58,lng:120.16,family:"Bima-Lembata",iso:"xbr"},
+  {name:"Kambera",lat:-9.82,lng:120.33,family:"Bima-Lembata",iso:"xbr"},
+  {name:"Tabundung-Karera",lat:-10.07,lng:120.22,family:"Bima-Lembata",iso:"xbr"},
+  {name:"Melolo (Rindi)",lat:-9.99,lng:120.68,family:"Bima-Lembata",iso:"xbr"},
+  {name:"Dhao",lat:-10.81,lng:122.66,family:"Bima-Lembata",iso:"nfa"},
+  {name:"Havu",lat:-10.55,lng:121.85,family:"Bima-Lembata",iso:"hvn"},
+  {name:"Raijua",lat:-10.62,lng:121.57,family:"Bima-Lembata",iso:"hvn"},
+
+  // A.2 Timor-Babar
+  {name:"Funai Helong",lat:-10.24,lng:123.68,family:"Timor-Babar",iso:"heg"},
+  {name:"Semau Helong",lat:-10.26,lng:123.38,family:"Timor-Babar",iso:"heg"},
+  {name:"Bolok Helong",lat:-10.23,lng:123.51,family:"Timor-Babar",iso:"heg"},
+  {name:"Tii",lat:-10.84,lng:122.96,family:"Timor-Babar",iso:"txq"},
+  {name:"Lole",lat:-10.81,lng:123.09,family:"Timor-Babar",iso:"llg"},
+  {name:"Ba'a",lat:-10.75,lng:123.06,family:"Timor-Babar",iso:"llg"},
+  {name:"Termanu",lat:-10.7,lng:123.14,family:"Timor-Babar",iso:"twu"},
+  {name:"Korbafo",lat:-10.63,lng:123.23,family:"Timor-Babar",iso:"twu"},
+  {name:"Bokai",lat:-10.74,lng:123.23,family:"Timor-Babar",iso:"bpz"},
+  {name:"Bilbaa",lat:-10.65,lng:123.31,family:"Timor-Babar",iso:"bpz"},
+  {name:"Landu",lat:-10.55,lng:123.28,family:"Timor-Babar",iso:"rgu"},
+  {name:"Rikou",lat:-10.62,lng:123.37,family:"Timor-Babar",iso:"rgu"},
+  {name:"Oepao",lat:-10.64,lng:123.41,family:"Timor-Babar",iso:"rgu"},
+  {name:"Dela-Oenale",lat:-10.85,lng:122.85,family:"Timor-Babar",iso:"row"},
+  {name:"Dengga",lat:-10.79,lng:122.95,family:"Timor-Babar",iso:"dnk"},
+  {name:"Meto",lat:-9.77,lng:124.14,family:"Timor-Babar",iso:"aoz"},
+  {name:"Roi'is Amarasi",lat:-10.3,lng:123.71,family:"Timor-Babar",iso:"aaz"},
+  {name:"Kotos Amarasi",lat:-10.23,lng:123.89,family:"Timor-Babar",iso:"aaz"},
+  {name:"Aam'abi",lat:-10.12,lng:124.05,family:"Timor-Babar",iso:"aoz"},
+  {name:"Amanuban",lat:-9.98,lng:124.38,family:"Timor-Babar",iso:"aoz"},
+  {name:"Amanatun",lat:-9.78,lng:124.71,family:"Timor-Babar",iso:"aoz"},
+  {name:"Ketun",lat:-10.3,lng:123.59,family:"Timor-Babar",iso:"aoz"},
+  {name:"Baumata",lat:-10.21,lng:123.7,family:"Timor-Babar",iso:"aoz"},
+  {name:"Kopas",lat:-10.29,lng:123.63,family:"Timor-Babar",iso:"aoz"},
+  {name:"Baikeno (Ambenu)",lat:-9.33,lng:124.26,family:"Timor-Babar",iso:"bkx"},
+  {name:"Fatule'u",lat:-9.93,lng:123.84,family:"Timor-Babar",iso:"aoz"},
+  {name:"Amfo'an",lat:-9.58,lng:123.92,family:"Timor-Babar",iso:"aoz"},
+  {name:"Timaus",lat:-10.21,lng:123.76,family:"Timor-Babar",iso:"aoz"},
+  {name:"Molo",lat:-9.69,lng:124.22,family:"Timor-Babar",iso:"aoz"},
+  {name:"N. Molo",lat:-9.65,lng:124.21,family:"Timor-Babar",iso:"aoz"},
+  {name:"S. Molo",lat:-9.8,lng:124.22,family:"Timor-Babar",iso:"aoz"},
+  {name:"Miomafo",lat:-9.51,lng:124.43,family:"Timor-Babar",iso:"aoz"},
+  {name:"Noemuti",lat:-9.61,lng:124.51,family:"Timor-Babar",iso:"aoz"},
+  {name:"Insana",lat:-9.42,lng:124.58,family:"Timor-Babar",iso:"aoz"},
+  {name:"Biboki",lat:-9.23,lng:124.72,family:"Timor-Babar",iso:"aoz"},
+  {name:"Kusa-Manea",lat:-9.44,lng:124.84,family:"Timor-Babar",iso:"aoz"},
+  {name:"Tetun",lat:-9.11,lng:125.53,family:"Timor-Babar",iso:"tet"},
+  {name:"E. Tetun",lat:-8.96,lng:126.01,family:"Timor-Babar",iso:"tet"},
+  {name:"Foho Tetun",lat:-9.16,lng:124.91,family:"Timor-Babar",iso:"tet"},
+  {name:"Fehan Tetun",lat:-9.41,lng:124.99,family:"Timor-Babar",iso:"tet"},
+  {name:"Habun",lat:-8.68,lng:126.03,family:"Timor-Babar",iso:"hbu"},
+  {name:"Kairui-Midiki",lat:-8.73,lng:126.15,family:"Timor-Babar",iso:"krd"},
+  {name:"Waima'a",lat:-8.57,lng:126.27,family:"Timor-Babar",iso:"wmh"},
+  {name:"Naueti",lat:-8.74,lng:126.63,family:"Timor-Babar",iso:"nxa"},
+  {name:"Lakalei",lat:-8.75,lng:125.89,family:"Timor-Babar",iso:"lka"},
+  {name:"Idate",lat:-8.93,lng:125.76,family:"Timor-Babar",iso:"idt"},
+  {name:"Raklungu",lat:-8.28,lng:125.58,family:"Timor-Babar",iso:"---"},
+  {name:"Hresuk",lat:-8.23,lng:125.58,family:"Timor-Babar",iso:"---"},
+  {name:"Rasua",lat:-8.19,lng:125.6,family:"Timor-Babar",iso:"---"},
+  {name:"Dadu'a",lat:-8.50,lng:125.89,family:"Timor-Babar",iso:"---"},
+  {name:"Ili'uun",lat:-7.84,lng:125.9,family:"Timor-Babar",iso:"ilu"},
+  {name:"Aputai",lat:-7.74,lng:126.24,family:"Timor-Babar",iso:"apx"},
+  {name:"Perai",lat:-7.62,lng:126.58,family:"Timor-Babar",iso:"wet"},
+  {name:"Tugun",lat:-7.73,lng:126.7,family:"Timor-Babar",iso:"tzn"},
+  {name:"Talur (Galolen)",lat:-7.89,lng:126.34,family:"Timor-Babar",iso:"ilw"},
+  {name:"Galolen",lat:-8.57,lng:126.02,family:"Timor-Babar",iso:"gal"},
+  {name:"Makuva",lat:-8.38,lng:127.21,family:"Timor-Babar",iso:"lva"},
+  {name:"Kisar",lat:-8.05,lng:127.18,family:"Timor-Babar",iso:"kje"},
+  {name:"Roma",lat:-7.59,lng:127.43,family:"Timor-Babar",iso:"rmm"},
+  {name:"Leti",lat:-8.2,lng:127.67,family:"Timor-Babar",iso:"lti"},
+  {name:"Moa",lat:-8.18,lng:127.94,family:"Timor-Babar",iso:"lex"},
+  {name:"Luang",lat:-8.18,lng:128.7,family:"Timor-Babar",iso:"lex"},
+  {name:"Wetan",lat:-7.91,lng:129.54,family:"Timor-Babar",iso:"lex"},
+  {name:"E. Damer (Ilih)",lat:-7.12,lng:128.69,family:"Timor-Babar",iso:"dmr"},
+  {name:"E. Damer (Wulur)",lat:-7.18,lng:128.63,family:"Timor-Babar",iso:"dmr"},
+  {name:"Teun",lat:-6.97,lng:129.14,family:"Timor-Babar",iso:"tve"},
+  {name:"Nila",lat:-6.73,lng:129.51,family:"Timor-Babar",iso:"nil"},
+  {name:"Serua",lat:-6.31,lng:130.02,family:"Timor-Babar",iso:"srw"},
+  {name:"W. Damer",lat:-7.12,lng:128.59,family:"Timor-Babar",iso:"drn"},
+  {name:"Dawera-Daweloor",lat:-7.76,lng:130.06,family:"Timor-Babar",iso:"ddw"},
+  {name:"Dai",lat:-7.56,lng:129.69,family:"Timor-Babar",iso:"dij"},
+  {name:"N. Babar",lat:-7.84,lng:129.74,family:"Timor-Babar",iso:"bcd"},
+  {name:"C. Marsela",lat:-8.15,lng:129.87,family:"Timor-Babar",iso:"mxz"},
+  {name:"W. Marsela",lat:-8.18,lng:129.83,family:"Timor-Babar",iso:"mss"},
+  {name:"SE. Babar",lat:-7.94,lng:129.8,family:"Timor-Babar",iso:"vbb"},
+  {name:"E. Marsela",lat:-8.13,lng:129.87,family:"Timor-Babar",iso:"vme"},
+  {name:"Serili",lat:-8.11,lng:129.9,family:"Timor-Babar",iso:"sve"},
+  {name:"Emplawas",lat:-8.03,lng:129.72,family:"Timor-Babar",iso:"emw"},
+  {name:"Imroing",lat:-7.97,lng:129.65,family:"Timor-Babar",iso:"imr"},
+  {name:"Tela-Masbuar",lat:-8.01,lng:129.69,family:"Timor-Babar",iso:"tvm"},
+  {name:"Selaru",lat:-8.18,lng:130.96,family:"Timor-Babar",iso:"slu"},
+  {name:"Seluwasan",lat:-7.84,lng:131.18,family:"Timor-Babar",iso:"sws"},
+  {name:"Makatian",lat:-7.59,lng:131.24,family:"Timor-Babar",iso:"---"},
+
+  // A.3 Central Timor
+  {name:"Welaun",lat:-9.0,lng:125.05,family:"Central Timor",iso:"wlh"},
+  {name:"Kemak",lat:-8.9,lng:125.21,family:"Central Timor",iso:"kem"},
+  {name:"Tokodede",lat:-8.66,lng:125.23,family:"Central Timor",iso:"tkd"},
+  {name:"NW. Mambae",lat:-8.76,lng:125.39,family:"Central Timor",iso:"mgm"},
+  {name:"C. Mambae",lat:-8.77,lng:125.62,family:"Central Timor",iso:"mgm"},
+  {name:"S. Mambae",lat:-9.09,lng:125.62,family:"Central Timor",iso:"mgm"},
+
+  // A.4 Aru
+  {name:"Ujir",lat:-5.69,lng:134.26,family:"Aru",iso:"udj"},
+  {name:"Kola",lat:-5.5,lng:134.59,family:"Aru",iso:"kvv"},
+  {name:"W. Kola",lat:-5.52,lng:134.53,family:"Aru",iso:"kvv"},
+  {name:"E. Kola",lat:-5.49,lng:134.64,family:"Aru",iso:"kvv"},
+  {name:"Kompane",lat:-5.64,lng:134.74,family:"Aru",iso:"kvp"},
+  {name:"Lola",lat:-6.34,lng:134.88,family:"Aru",iso:"lcd"},
+  {name:"Manombai",lat:-5.94,lng:134.33,family:"Aru",iso:"woo"},
+  {name:"Batuley",lat:-5.81,lng:134.78,family:"Aru",iso:"bay"},
+  {name:"Mariri",lat:-6.15,lng:134.88,family:"Aru",iso:"mqi"},
+  {name:"Dobel",lat:-6.33,lng:134.64,family:"Aru",iso:"kvo"},
+  {name:"Koba",lat:-6.48,lng:134.61,family:"Aru",iso:"kpd"},
+  {name:"Lorang",lat:-6.3,lng:134.41,family:"Aru",iso:"lrn"},
+  {name:"Barakai",lat:-6.74,lng:134.67,family:"Aru",iso:"baj"},
+  {name:"Karey",lat:-6.74,lng:134.38,family:"Aru",iso:"kyd"},
+  {name:"NW. Tarangan",lat:-6.31,lng:134.18,family:"Aru",iso:"txn"},
+  {name:"SW. Tarangan",lat:-6.62,lng:134.17,family:"Aru",iso:"txn"},
+  {name:"SW. Tarangan (Ngaibor)",lat:-6.77,lng:134.08,family:"Aru",iso:"txn"},
+  {name:"NE. Tarangan",lat:-6.76,lng:134.29,family:"Aru",iso:"tre"},
+  {name:"SE. Tarangan",lat:-6.56,lng:134.43,family:"Aru",iso:"tre"},
+
+  // A.5 Taliabu
+  {name:"Taliabu",lat:-1.82,lng:124.5,family:"Taliabu (Celebic)",iso:"tlv"},
+  {name:"Soboyo",lat:-1.85,lng:124.87,family:"Taliabu (Celebic)",iso:"tlv"},
+  {name:"Kadai",lat:-1.75,lng:125.14,family:"Taliabu (Celebic)",iso:"kzd"},
+
+  // A.6 Sula-Buru
+  {name:"Mangole",lat:-1.88,lng:125.82,family:"Sula-Buru",iso:"mqc"},
+  {name:"Sanana",lat:-2.23,lng:125.94,family:"Sula-Buru",iso:"szn"},
+  {name:"Lisela",lat:-3.09,lng:126.5,family:"Sula-Buru",iso:"lcl"},
+  {name:"Buru (Rana/Masarete)",lat:-3.44,lng:126.63,family:"Sula-Buru",iso:"mhs"},
+  {name:"Buru (Wae Sama)",lat:-3.57,lng:127.13,family:"Sula-Buru",iso:"mhs"},
+  {name:"Ambelau",lat:-3.86,lng:127.2,family:"Sula-Buru",iso:"amv"},
+  {name:"Hukumina",lat:-3.15,lng:126.08,family:"Sula-Buru",iso:"huw"},
+
+  // A.7 Ambon-Seram
+  {name:"Boano",lat:-2.96,lng:127.95,family:"Ambon-Seram",iso:"bzn"},
+  {name:"Lisabata",lat:-2.86,lng:128.88,family:"Ambon-Seram",iso:"lcs"},
+  {name:"Nuniali/Noniali",lat:-2.87,lng:128.42,family:"Ambon-Seram",iso:"lcs"},
+  {name:"Hulung",lat:-2.86,lng:128.56,family:"Ambon-Seram",iso:"huk"},
+  {name:"Loun",lat:-2.86,lng:128.93,family:"Ambon-Seram",iso:"lox"},
+  {name:"Saleman",lat:-2.93,lng:129.06,family:"Ambon-Seram",iso:"sau"},
+  {name:"Naka'ela",lat:-2.86,lng:128.47,family:"Ambon-Seram",iso:"nae"},
+  {name:"N. Alune",lat:-3.04,lng:128.52,family:"Ambon-Seram",iso:"alp"},
+  {name:"W. Alune",lat:-3.27,lng:128.33,family:"Ambon-Seram",iso:"alp"},
+  {name:"Watui",lat:-3.25,lng:128.59,family:"Ambon-Seram",iso:"---"},
+  {name:"Kayeli",lat:-3.39,lng:127.12,family:"Ambon-Seram",iso:"kzl"},
+  {name:"Leliali",lat:-3.11,lng:126.87,family:"Ambon-Seram",iso:"kzl"},
+  {name:"N. Wemale (Waraka)",lat:-3.05,lng:128.84,family:"Ambon-Seram",iso:"weo"},
+  {name:"S. Wemale (Hunitetu)",lat:-3.29,lng:128.55,family:"Ambon-Seram",iso:"tlw"},
+  {name:"Manipa",lat:-3.28,lng:127.56,family:"Ambon-Seram",iso:"mqp"},
+  {name:"Batumerah",lat:-3.68,lng:128.21,family:"Ambon-Seram",iso:"---"},
+  {name:"Luhu",lat:-3.13,lng:127.97,family:"Ambon-Seram",iso:"lcq"},
+  {name:"Kelang",lat:-3.33,lng:127.58,family:"Ambon-Seram",iso:"lcq"},
+  {name:"Piru",lat:-3.05,lng:128.2,family:"Ambon-Seram",iso:"ppr"},
+  {name:"Larike",lat:-3.72,lng:127.93,family:"Ambon-Seram",iso:"alo"},
+  {name:"Wakasihu",lat:-3.77,lng:127.96,family:"Ambon-Seram",iso:"alo"},
+  {name:"Alang",lat:-3.77,lng:127.99,family:"Ambon-Seram",iso:"alo"},
+  {name:"Liliboi",lat:-3.76,lng:128.02,family:"Ambon-Seram",iso:"alo"},
+  {name:"Asilulu",lat:-3.67,lng:127.95,family:"Ambon-Seram",iso:"asl"},
+  {name:"Sepa",lat:-3.34,lng:129.14,family:"Ambon-Seram",iso:"spb"},
+  {name:"Teluti",lat:-3.29,lng:129.66,family:"Ambon-Seram",iso:"tlt"},
+  {name:"Tamilou",lat:-3.39,lng:129.39,family:"Ambon-Seram",iso:"tlt"},
+  {name:"Haya",lat:-3.43,lng:129.5,family:"Ambon-Seram",iso:"tlt"},
+  {name:"Tehoru",lat:-3.37,lng:129.52,family:"Ambon-Seram",iso:"tlt"},
+  {name:"Paulohi",lat:-3.24,lng:128.81,family:"Ambon-Seram",iso:"plh"},
+  {name:"Kaibobo",lat:-3.16,lng:128.21,family:"Ambon-Seram",iso:"kzb"},
+  {name:"Hitu",lat:-3.57,lng:128.19,family:"Ambon-Seram",iso:"htu"},
+  {name:"Sou Amana Teru (Tulehu)",lat:-3.58,lng:128.31,family:"Ambon-Seram",iso:"tlu"},
+  {name:"Laha",lat:-3.71,lng:128.09,family:"Ambon-Seram",iso:"lhh"},
+  {name:"Seit-Kaitetu (Hila)",lat:-3.6,lng:128.04,family:"Ambon-Seram",iso:"hik"},
+  {name:"Kamarian",lat:-3.45,lng:128.46,family:"Ambon-Seram",iso:"kzx"},
+  {name:"Seruawan",lat:-3.44,lng:128.43,family:"Ambon-Seram",iso:"kzx"},
+  {name:"Tihulale",lat:-3.45,lng:128.51,family:"Ambon-Seram",iso:"kzx"},
+  {name:"Rumakai",lat:-3.44,lng:128.55,family:"Ambon-Seram",iso:"kzx"},
+  {name:"Haruku",lat:-3.57,lng:128.48,family:"Ambon-Seram",iso:"hrk"},
+  {name:"Kailolo",lat:-3.53,lng:128.43,family:"Ambon-Seram",iso:"hrk"},
+  {name:"Saparua",lat:-3.58,lng:128.64,family:"Ambon-Seram",iso:"spr"},
+  {name:"Latu",lat:-3.41,lng:128.67,family:"Ambon-Seram",iso:"ltu"},
+  {name:"Nusalaut",lat:-3.68,lng:128.78,family:"Ambon-Seram",iso:"nul"},
+  {name:"Amahai",lat:-3.34,lng:128.94,family:"Ambon-Seram",iso:"amq"},
+  {name:"Makariki",lat:-3.3,lng:128.96,family:"Ambon-Seram",iso:"amq"},
+  {name:"Ruta",lat:-3.35,lng:128.98,family:"Ambon-Seram",iso:"amq"},
+  {name:"Atamanu",lat:-3.2,lng:128.94,family:"Ambon-Seram",iso:"jal"},
+  {name:"Yalahatan",lat:-3.36,lng:129.32,family:"Ambon-Seram",iso:"jal"},
+  {name:"Manusela (Sou Upaa)",lat:-2.91,lng:129.52,family:"Ambon-Seram",iso:"wha"},
+  {name:"Huaulu",lat:-2.94,lng:129.19,family:"Ambon-Seram",iso:"hud"},
+  {name:"Kowa",lat:-3.11,lng:129.43,family:"Ambon-Seram",iso:"wha"},
+  {name:"Kanikeh",lat:-2.99,lng:129.48,family:"Ambon-Seram",iso:"wha"},
+  {name:"S. Manusela",lat:-3.21,lng:129.57,family:"Ambon-Seram",iso:"wha"},
+  {name:"Hatuolo",lat:-2.81,lng:129.52,family:"Ambon-Seram",iso:"wha"},
+  {name:"Maneo",lat:-3.08,lng:129.78,family:"Ambon-Seram",iso:"wha"},
+  {name:"N. Nuaulu",lat:-2.93,lng:129.28,family:"Ambon-Seram",iso:"nni"},
+  {name:"S. Nuaulu",lat:-3.23,lng:129.15,family:"Ambon-Seram",iso:"nxl"},
+  {name:"Seti",lat:-3.12,lng:129.95,family:"Ambon-Seram",iso:"ste"},
+  {name:"Kobi",lat:-2.93,lng:129.83,family:"Ambon-Seram",iso:"ste"},
+  {name:"Wahakaim",lat:-3.02,lng:130.07,family:"Ambon-Seram",iso:"ste"},
+  {name:"Ulahaham-Dihil",lat:-3.32,lng:129.86,family:"Ambon-Seram",iso:"ste"},
+  {name:"Liana",lat:-3.32,lng:129.93,family:"Ambon-Seram",iso:"ste"},
+  {name:"Liambata (Atiahu)",lat:-3.36,lng:129.99,family:"Ambon-Seram",iso:"ste"},
+  {name:"Hoti",lat:-3.0,lng:130.36,family:"Ambon-Seram",iso:"hti"},
+  {name:"Benggoi",lat:-3.09,lng:130.19,family:"Ambon-Seram",iso:"bgy"},
+  {name:"Salas",lat:-3.2,lng:130.59,family:"Ambon-Seram",iso:"sgu"},
+
+  // A.8 Seram-Tanimbar-Bomberai
+  {name:"Bobot",lat:-3.44,lng:130.18,family:"Seram-Tanimbar-Bomberai",iso:"bty"},
+  {name:"Masiwang",lat:-3.3,lng:130.6,family:"Seram-Tanimbar-Bomberai",iso:"bnf"},
+  {name:"Bati",lat:-3.66,lng:130.82,family:"Seram-Tanimbar-Bomberai",iso:"bvt"},
+  {name:"Geser-Gorom",lat:-4.01,lng:131.23,family:"Seram-Tanimbar-Bomberai",iso:"ges"},
+  {name:"Geser",lat:-3.89,lng:130.93,family:"Seram-Tanimbar-Bomberai",iso:"ges"},
+  {name:"Gorom",lat:-4.0,lng:131.4,family:"Seram-Tanimbar-Bomberai",iso:"ges"},
+  {name:"Watubela",lat:-4.4,lng:131.6,family:"Seram-Tanimbar-Bomberai",iso:"wah"},
+  {name:"Kesui",lat:-4.48,lng:131.65,family:"Seram-Tanimbar-Bomberai",iso:"---"},
+  {name:"Kowiai",lat:-4.22,lng:133.47,family:"Seram-Tanimbar-Bomberai",iso:"kwh"},
+  {name:"Teor",lat:-4.74,lng:131.74,family:"Seram-Tanimbar-Bomberai",iso:"tev"},
+  {name:"Kur",lat:-5.34,lng:131.99,family:"Seram-Tanimbar-Bomberai",iso:"kuv"},
+  {name:"Yamdena",lat:-7.74,lng:131.44,family:"Seram-Tanimbar-Bomberai",iso:"jmd"},
+  {name:"Fordata",lat:-7.29,lng:131.51,family:"Seram-Tanimbar-Bomberai",iso:"frd"},
+  {name:"Sera",lat:-7.67,lng:131.03,family:"Seram-Tanimbar-Bomberai",iso:"frd"},
+  {name:"Kei Kecil",lat:-5.75,lng:132.73,family:"Seram-Tanimbar-Bomberai",iso:"kei"},
+  {name:"Kei Besar",lat:-5.64,lng:133.02,family:"Seram-Tanimbar-Bomberai",iso:"kei"},
+  {name:"Uruangnirin",lat:-3.45,lng:132.75,family:"Seram-Tanimbar-Bomberai",iso:"urn"},
+  {name:"Onin",lat:-2.76,lng:132.06,family:"Seram-Tanimbar-Bomberai",iso:"oni"},
+  {name:"Sekar",lat:-2.66,lng:132.47,family:"Seram-Tanimbar-Bomberai",iso:"skz"},
+  {name:"Arguni",lat:-2.65,lng:132.56,family:"Seram-Tanimbar-Bomberai",iso:"agf"},
+  {name:"Bedoanas (Yarik)",lat:-2.74,lng:132.57,family:"Seram-Tanimbar-Bomberai",iso:"bed"},
+  {name:"Erokwanas (Kambran)",lat:-2.84,lng:132.71,family:"Seram-Tanimbar-Bomberai",iso:"erw"},
+  {name:"Irarutu",lat:-2.94,lng:133.59,family:"Seram-Tanimbar-Bomberai",iso:"irh"},
+  {name:"Kuri",lat:-2.81,lng:134.1,family:"Seram-Tanimbar-Bomberai",iso:"nbn"},
+
+  // A.9 Banda isolate
+  {name:"Banda",lat:-4.56,lng:129.93,family:"Banda isolate",iso:"bnd"},
+  {name:"Banda-Elat",lat:-5.65,lng:132.99,family:"Banda isolate",iso:"bnd"},
+  {name:"Banda-Eli",lat:-5.41,lng:133.14,family:"Banda isolate",iso:"bnd"},
+
+  // A.10 SHWNG
+  {name:"E. Makian",lat:0.07,lng:127.42,family:"SHWNG",iso:"mky"},
+  {name:"Gane/Giman",lat:-0.63,lng:128.15,family:"SHWNG",iso:"gzn"},
+  {name:"Buli",lat:1.0,lng:128.44,family:"SHWNG",iso:"bzq"},
+  {name:"Maba",lat:0.59,lng:128.42,family:"SHWNG",iso:"mqa"},
+  {name:"Patani",lat:0.34,lng:128.63,family:"SHWNG",iso:"ptn"},
+  {name:"Sawai",lat:0.51,lng:128.09,family:"SHWNG",iso:"szw"},
+  {name:"Gebe",lat:-0.08,lng:129.42,family:"SHWNG",iso:"gei"},
+  {name:"Matbat",lat:-1.88,lng:130.08,family:"SHWNG",iso:"xmt"},
+  {name:"Biga",lat:-2.0,lng:130.27,family:"SHWNG",iso:"bhc"},
+  {name:"Ambel",lat:-0.18,lng:130.92,family:"SHWNG",iso:"wgo"},
+  {name:"Kawe",lat:-0.17,lng:130.33,family:"SHWNG",iso:"kgb"},
+  {name:"Wauyai",lat:-0.28,lng:130.6,family:"SHWNG",iso:"wuy"},
+  {name:"Legenyem",lat:-0.36,lng:130.75,family:"SHWNG",iso:"lcc"},
+  {name:"Ma'ya",lat:-1.22,lng:130.91,family:"SHWNG",iso:"slz"},
+  {name:"Batta",lat:-0.86,lng:130.65,family:"SHWNG",iso:"---"},
+  {name:"Salawati",lat:-1.05,lng:130.83,family:"SHWNG",iso:"xmx"},
+  {name:"As",lat:-0.75,lng:131.73,family:"SHWNG",iso:"asz"},
+  {name:"Biak",lat:-0.95,lng:135.88,family:"SHWNG",iso:"bhw"},
+  {name:"Meoswar",lat:-2.08,lng:134.38,family:"SHWNG",iso:"mvx"},
+  {name:"Roon",lat:-2.43,lng:134.56,family:"SHWNG",iso:"rnn"},
+  {name:"Dusner",lat:-2.74,lng:134.39,family:"SHWNG",iso:"dsn"},
+  {name:"Yeretuar",lat:-3.02,lng:134.66,family:"SHWNG",iso:"gop"},
+  {name:"Yaur",lat:-3.33,lng:134.88,family:"SHWNG",iso:"jau"},
+  {name:"Yerisiam",lat:-3.63,lng:135.03,family:"SHWNG",iso:"ire"},
+  {name:"Wandamen",lat:-2.26,lng:134.0,family:"SHWNG",iso:"wad"},
+  {name:"Wooi",lat:-1.63,lng:135.48,family:"SHWNG",iso:"wbw"},
+  {name:"Pom",lat:-1.64,lng:135.62,family:"SHWNG",iso:"pmo"},
+  {name:"Marau",lat:-1.67,lng:135.8,family:"SHWNG",iso:"mvr"},
+  {name:"Ansus",lat:-1.75,lng:135.87,family:"SHWNG",iso:"and"},
+  {name:"Papuma",lat:-1.77,lng:135.91,family:"SHWNG",iso:"ppm"},
+  {name:"Munggui",lat:-1.67,lng:135.92,family:"SHWNG",iso:"mth"},
+  {name:"Busami",lat:-1.74,lng:136.03,family:"SHWNG",iso:"bsm"},
+  {name:"Serui-Laut",lat:-1.88,lng:136.25,family:"SHWNG",iso:"seu"},
+  {name:"Ambai",lat:-1.88,lng:136.53,family:"SHWNG",iso:"amk"},
+  {name:"Wabo",lat:-1.77,lng:136.76,family:"SHWNG",iso:"wbb"},
+  {name:"Kurudu",lat:-1.84,lng:137.02,family:"SHWNG",iso:"kjr"},
+  {name:"Tandia",lat:-2.84,lng:134.53,family:"SHWNG",iso:"tni"},
+  {name:"Moor",lat:-2.87,lng:135.95,family:"SHWNG",iso:"mhz"},
+  {name:"Waropen",lat:-2.31,lng:136.63,family:"SHWNG",iso:"wrp"},
+  {name:"Warembori",lat:-1.66,lng:137.57,family:"SHWNG",iso:"wsa"},
+  {name:"Pauwi",lat:-1.65,lng:137.8,family:"SHWNG",iso:"---"},
+  {name:"Yoke",lat:-1.69,lng:138.03,family:"SHWNG",iso:"yki"},
+
+  // A.11.1 Sulawesi Celebic
+  {name:"Banggai",lat:-1.63,lng:123.53,family:"Sulawesi – Celebic",iso:"bgz"},
+  {name:"Balantak",lat:-0.87,lng:123.29,family:"Sulawesi – Celebic",iso:"blz"},
+  {name:"Andio",lat:-0.88,lng:123.14,family:"Sulawesi – Celebic",iso:"bzb"},
+  {name:"Saluan",lat:-1.01,lng:122.43,family:"Sulawesi – Celebic",iso:"loe"},
+  {name:"Batui",lat:-1.3,lng:122.55,family:"Sulawesi – Celebic",iso:"zbt"},
+  {name:"Bobongko",lat:-0.33,lng:121.94,family:"Sulawesi – Celebic",iso:"bgb"},
+  {name:"Bahonsuai",lat:-2.23,lng:121.71,family:"Sulawesi – Celebic",iso:"bsu"},
+  {name:"Bungku",lat:-3.22,lng:122.21,family:"Sulawesi – Celebic",iso:"bkz"},
+  {name:"Koroni",lat:-2.64,lng:121.98,family:"Sulawesi – Celebic",iso:"xkq"},
+  {name:"Kulisusu",lat:-4.58,lng:123.05,family:"Sulawesi – Celebic",iso:"vkl"},
+  {name:"Mori Bawah",lat:-2.56,lng:121.37,family:"Sulawesi – Celebic",iso:"xmz"},
+  {name:"Taloki",lat:-4.65,lng:122.87,family:"Sulawesi – Celebic",iso:"tlk"},
+  {name:"Wawonii",lat:-4.14,lng:123.1,family:"Sulawesi – Celebic",iso:"wow"},
+  {name:"Moronene",lat:-4.62,lng:121.82,family:"Sulawesi – Celebic",iso:"mqn"},
+  {name:"Tokotu'a",lat:-5.26,lng:121.93,family:"Sulawesi – Celebic",iso:"mqn"},
+  {name:"Mori Atas",lat:-2.26,lng:121.04,family:"Sulawesi – Celebic",iso:"mzq"},
+  {name:"Padoe",lat:-2.61,lng:121.24,family:"Sulawesi – Celebic",iso:"pdo"},
+  {name:"Tomadino",lat:-2.56,lng:121.94,family:"Sulawesi – Celebic",iso:"tdi"},
+  {name:"Kodeoha",lat:-3.4,lng:120.94,family:"Sulawesi – Celebic",iso:"vko"},
+  {name:"Rahambuu",lat:-3.25,lng:121.06,family:"Sulawesi – Celebic",iso:"raz"},
+  {name:"Tolaki",lat:-4.04,lng:121.89,family:"Sulawesi – Celebic",iso:"lbw"},
+  {name:"Waru",lat:-3.41,lng:122.06,family:"Sulawesi – Celebic",iso:"wru"},
+  {name:"Busoa",lat:-5.61,lng:122.62,family:"Sulawesi – Celebic",iso:"bup"},
+  {name:"Cia-Cia",lat:-5.68,lng:122.79,family:"Sulawesi – Celebic",iso:"cia"},
+  {name:"Kaisabu",lat:-5.48,lng:122.69,family:"Sulawesi – Celebic",iso:"cia"},
+  {name:"Kumbewaha",lat:-5.34,lng:123.15,family:"Sulawesi – Celebic",iso:"xks"},
+  {name:"Wolowa",lat:-5.52,lng:122.86,family:"Sulawesi – Celebic",iso:"xks"},
+  {name:"Lasalimu",lat:-5.24,lng:123.13,family:"Sulawesi – Celebic",iso:"llm"},
+  {name:"Kaimbulawa",lat:-5.65,lng:122.54,family:"Sulawesi – Celebic",iso:"zka"},
+  {name:"Kambowa",lat:-5.02,lng:122.95,family:"Sulawesi – Celebic",iso:"ues"},
+  {name:"Kioko",lat:-4.99,lng:122.95,family:"Sulawesi – Celebic",iso:"ues"},
+  {name:"Liabuku",lat:-5.4,lng:122.64,family:"Sulawesi – Celebic",iso:"lix"},
+  {name:"Muna",lat:-4.94,lng:122.52,family:"Sulawesi – Celebic",iso:"mnb"},
+  {name:"S. Muna",lat:-5.3,lng:122.58,family:"Sulawesi – Celebic",iso:"mnb"},
+  {name:"Pancana",lat:-5.3,lng:122.97,family:"Sulawesi – Celebic",iso:"pnp"},
+  {name:"N. Tukang Besi",lat:-5.31,lng:123.58,family:"Sulawesi – Celebic",iso:"khc"},
+  {name:"S. Tukang Besi",lat:-5.75,lng:123.95,family:"Sulawesi – Celebic",iso:"bhq"},
+  {name:"Bonerate",lat:-7.38,lng:121.79,family:"Sulawesi – Celebic",iso:"bna"},
+  {name:"Dondo",lat:0.8,lng:120.71,family:"Sulawesi – Celebic",iso:"dok"},
+  {name:"Lauje",lat:0.51,lng:120.26,family:"Sulawesi – Celebic",iso:"law"},
+  {name:"Tomini",lat:0.43,lng:120.89,family:"Sulawesi – Celebic",iso:"txm"},
+  {name:"Balaesang",lat:-0.06,lng:119.69,family:"Sulawesi – Celebic",iso:"bls"},
+  {name:"Dampelas",lat:0.7,lng:120.22,family:"Sulawesi – Celebic",iso:"dms"},
+  {name:"Pendau",lat:-0.11,lng:119.86,family:"Sulawesi – Celebic",iso:"ums"},
+  {name:"Taje",lat:-0.73,lng:120.08,family:"Sulawesi – Celebic",iso:"pee"},
+  {name:"Tajio",lat:-0.32,lng:120.01,family:"Sulawesi – Celebic",iso:"tdj"},
+  {name:"Da'a Kaili",lat:-1.21,lng:119.53,family:"Sulawesi – Celebic",iso:"kzf"},
+  {name:"Ledo Kaili",lat:-1.03,lng:120.13,family:"Sulawesi – Celebic",iso:"lew"},
+  {name:"Moma",lat:-1.43,lng:120.01,family:"Sulawesi – Celebic",iso:"myl"},
+  {name:"Tado-Lindu",lat:-1.36,lng:120.06,family:"Sulawesi – Celebic",iso:"klw"},
+  {name:"Sedoa",lat:-1.37,lng:120.38,family:"Sulawesi – Celebic",iso:"tvw"},
+  {name:"Pamona",lat:-1.63,lng:121.27,family:"Sulawesi – Celebic",iso:"pmf"},
+  {name:"Topoiyo",lat:-2.07,lng:119.31,family:"Sulawesi – Celebic",iso:"toy"},
+  {name:"Sarudu",lat:-1.71,lng:119.35,family:"Sulawesi – Celebic",iso:"sdu"},
+  {name:"Uma",lat:-1.7,lng:119.97,family:"Sulawesi – Celebic",iso:"ppk"},
+  {name:"Kalao",lat:-7.31,lng:121.0,family:"Sulawesi – Celebic",iso:"kly"},
+  {name:"Laiyolo",lat:-6.46,lng:120.48,family:"Sulawesi – Celebic",iso:"lji"},
+  {name:"Kamaru",lat:-5.16,lng:123.05,family:"Sulawesi – Celebic",iso:"kgx"},
+  {name:"Wolio",lat:-5.33,lng:122.67,family:"Sulawesi – Celebic",iso:"wlo"},
+  {name:"Wotu",lat:-2.6,lng:120.9,family:"Sulawesi – Celebic",iso:"wtw"},
+
+  // A.11.2 Sangir
+  {name:"Sangil",lat:5.4,lng:125.38,family:"Sulawesi – Sangir",iso:"snl"},
+  {name:"Sangir",lat:3.54,lng:125.55,family:"Sulawesi – Sangir",iso:"sxn"},
+  {name:"Talaud",lat:4.12,lng:126.8,family:"Sulawesi – Sangir",iso:"tld"},
+  {name:"Talaud (Tirrawatta)",lat:3.79,lng:126.8,family:"Sulawesi – Sangir",iso:"tld"},
+  {name:"Bantik",lat:1.45,lng:124.85,family:"Sulawesi – Sangir",iso:"bnq"},
+  {name:"Ratahan",lat:1.08,lng:124.86,family:"Sulawesi – Sangir",iso:"rth"},
+
+  // A.11.3 Minahasan
+  {name:"Tombulu",lat:1.40,lng:124.75,family:"Sulawesi – Minahasan",iso:"tom"},
+  {name:"Tondano",lat:1.28,lng:124.96,family:"Sulawesi – Minahasan",iso:"tdn"},
+  {name:"Tonsea",lat:1.51,lng:125.05,family:"Sulawesi – Minahasan",iso:"txs"},
+  {name:"Tontemboan",lat:1.25,lng:124.65,family:"Sulawesi – Minahasan",iso:"tnt"},
+  {name:"Tonsawang",lat:1.05,lng:124.65,family:"Sulawesi – Minahasan",iso:"tnw"},
+
+  // A.11.4 Gorontalo-Mongondow
+  {name:"Bintauna",lat:0.75,lng:123.49,family:"Sulawesi – Gorontalo-Mongondow",iso:"bne"},
+  {name:"Bolango",lat:0.39,lng:123.89,family:"Sulawesi – Gorontalo-Mongondow",iso:"bld"},
+  {name:"Buol",lat:0.98,lng:121.52,family:"Sulawesi – Gorontalo-Mongondow",iso:"blf"},
+  {name:"Gorontalo",lat:0.63,lng:122.29,family:"Sulawesi – Gorontalo-Mongondow",iso:"gor"},
+  {name:"Kaidipang",lat:0.86,lng:123.22,family:"Sulawesi – Gorontalo-Mongondow",iso:"kzp"},
+  {name:"Lolak",lat:0.86,lng:124.12,family:"Sulawesi – Gorontalo-Mongondow",iso:"llq"},
+  {name:"Suwawa",lat:0.49,lng:123.36,family:"Sulawesi – Gorontalo-Mongondow",iso:"swu"},
+  {name:"Mongondow",lat:0.65,lng:124.11,family:"Sulawesi – Gorontalo-Mongondow",iso:"mog"},
+  {name:"Ponosakan",lat:0.92,lng:124.71,family:"Sulawesi – Gorontalo-Mongondow",iso:"pns"},
+
+  // A.11.5 Toli-toli
+  {name:"Boano (Toli-toli)",lat:0.51,lng:120.99,family:"Sulawesi – Toli-toli",iso:"bzl"},
+  {name:"Totoli",lat:1.15,lng:120.88,family:"Sulawesi – Toli-toli",iso:"txe"},
+
+  // A.11.6 South Sulawesi
+  {name:"Lemolang/Limola",lat:-2.63,lng:120.27,family:"Sulawesi – South",iso:"ley"},
+  {name:"Coastal Konjo",lat:-5.42,lng:120.3,family:"Sulawesi – South",iso:"kjc"},
+  {name:"Makasar",lat:-5.66,lng:119.84,family:"Sulawesi – South",iso:"mak"},
+  {name:"Selayar",lat:-6.1,lng:120.5,family:"Sulawesi – South",iso:"sly"},
+  {name:"Duri",lat:-3.37,lng:119.87,family:"Sulawesi – South",iso:"mvp"},
+  {name:"Enrekang",lat:-3.54,lng:119.66,family:"Sulawesi – South",iso:"ptt"},
+  {name:"Maiwa",lat:-3.59,lng:119.98,family:"Sulawesi – South",iso:"wmm"},
+  {name:"Aralle-Tabulahan",lat:-2.78,lng:119.32,family:"Sulawesi – South",iso:"atq"},
+  {name:"Bambam",lat:-3.03,lng:119.2,family:"Sulawesi – South",iso:"ptu"},
+  {name:"Kalumpang",lat:-2.33,lng:119.47,family:"Sulawesi – South",iso:"kli"},
+  {name:"Mamasa",lat:-3.08,lng:119.48,family:"Sulawesi – South",iso:"mqj"},
+  {name:"Tae'",lat:-2.58,lng:120.14,family:"Sulawesi – South",iso:"rob"},
+  {name:"Toraja Sa'dan",lat:-2.97,lng:119.83,family:"Sulawesi – South",iso:"sda"},
+  {name:"Mamuju",lat:-2.51,lng:119.08,family:"Sulawesi – South",iso:"mqx"},
+  {name:"Mandar",lat:-3.35,lng:119.07,family:"Sulawesi – South",iso:"mdr"},
+  {name:"Bada",lat:-1.8,lng:120.32,family:"Sulawesi – South",iso:"bhz"},
+  {name:"Besoa",lat:-1.6,lng:120.38,family:"Sulawesi – South",iso:"bep"},
+  {name:"Napu",lat:-1.44,lng:120.34,family:"Sulawesi – South",iso:"npy"},
+  {name:"Seko Padang",lat:-2.14,lng:119.96,family:"Sulawesi – South",iso:"skx"},
+  {name:"Seko Tengah",lat:-2.22,lng:119.82,family:"Sulawesi – South",iso:"sko"},
+  {name:"Rampi",lat:-2.14,lng:120.36,family:"Sulawesi – South",iso:"lje"},
+  {name:"Bugis",lat:-4.47,lng:119.98,family:"Sulawesi – South",iso:"bug"},
+  {name:"Campalagian",lat:-4.02,lng:119.62,family:"Sulawesi – South",iso:"cml"},
+
+  // A.12 Other Austronesian
+  {name:"Sumbawa",lat:-8.72,lng:117.47,family:"Other Austronesian",iso:"smw"},
+  {name:"Sasak",lat:-8.58,lng:116.28,family:"Other Austronesian",iso:"sas"},
+  {name:"Balinese",lat:-8.36,lng:115.08,family:"Other Austronesian",iso:"ban"},
+  {name:"Bakumpai",lat:-1.99,lng:114.77,family:"Other Austronesian",iso:"bkr"},
+  {name:"Basap",lat:1.41,lng:117.94,family:"Other Austronesian",iso:"bdb"},
+  {name:"Dusun Witu",lat:-1.57,lng:114.98,family:"Other Austronesian",iso:"duw"},
+  {name:"Indonesian Bajau",lat:-3.69,lng:122.25,family:"Other Austronesian",iso:"bdl"},
+  {name:"Ma'anyan",lat:-2.12,lng:115.09,family:"Other Austronesian",iso:"mhy"},
+  {name:"Ngaju",lat:-1.58,lng:112.79,family:"Other Austronesian",iso:"nij"},
+  {name:"Tunjung",lat:-0.29,lng:115.88,family:"Other Austronesian",iso:"tjg"},
+  {name:"Bahau",lat:0.31,lng:115.33,family:"Other Austronesian",iso:"bhv"},
+  {name:"Busang Kayan",lat:0.03,lng:115.4,family:"Other Austronesian",iso:"bfg"},
+  {name:"E. Penan",lat:4.59,lng:114.58,family:"Other Austronesian",iso:"pez"},
+  {name:"Lundayeh",lat:4.25,lng:115.5,family:"Other Austronesian",iso:"lnd"},
+  {name:"Modang",lat:0.81,lng:116.57,family:"Other Austronesian",iso:"mxd"},
+  {name:"Punan Aput",lat:1.38,lng:116.09,family:"Other Austronesian",iso:"pud"},
+  {name:"Punan Tubu",lat:2.87,lng:116.26,family:"Other Austronesian",iso:"puj"},
+  {name:"Ukit",lat:1.57,lng:114.58,family:"Other Austronesian",iso:"umi"},
+  {name:"W. Berawan",lat:3.98,lng:114.32,family:"Other Austronesian",iso:"zbw"},
+  {name:"W. Penan",lat:3.47,lng:114.52,family:"Other Austronesian",iso:"pne"},
+  {name:"Simalungun Batak",lat:3.04,lng:98.91,family:"Other Austronesian",iso:"bts"},
+  {name:"Toba Batak",lat:2.35,lng:99.18,family:"Other Austronesian",iso:"bbc"},
+
+  // A.13.1 Papuan Greater West Bomberai (including Timor-Alor-Pantar)
+  {name:"Kalamang",lat:-3.47,lng:132.68,family:"Papuan – Greater West Bomberai",iso:"kgv"},
+  {name:"Iha",lat:-2.81,lng:132.27,family:"Papuan – Greater West Bomberai",iso:"ihp"},
+  {name:"Mbaham",lat:-3.11,lng:132.64,family:"Papuan – Greater West Bomberai",iso:"bdw"},
+  {name:"Bunak",lat:-9.16,lng:125.28,family:"Papuan – Greater West Bomberai",iso:"bfn"},
+  {name:"Makasae",lat:-8.66,lng:126.51,family:"Papuan – Greater West Bomberai",iso:"mkz"},
+  {name:"Makalero",lat:-8.71,lng:126.82,family:"Papuan – Greater West Bomberai",iso:"mjb"},
+  {name:"Sa'ani",lat:-8.56,lng:126.83,family:"Papuan – Greater West Bomberai",iso:"---"},
+  {name:"Fataluku",lat:-8.49,lng:127.08,family:"Papuan – Greater West Bomberai",iso:"ddg"},
+  {name:"Oirata",lat:-8.09,lng:127.21,family:"Papuan – Greater West Bomberai",iso:"oia"},
+  {name:"W. Pantar",lat:-8.53,lng:124.06,family:"Papuan – Greater West Bomberai",iso:"lev"},
+  {name:"Lamma",lat:-8.38,lng:124.01,family:"Papuan – Greater West Bomberai",iso:"lev"},
+  {name:"Mauta",lat:-8.5,lng:124.12,family:"Papuan – Greater West Bomberai",iso:"lev"},
+  {name:"Tubbe",lat:-8.43,lng:124.09,family:"Papuan – Greater West Bomberai",iso:"lev"},
+  {name:"Di'ang",lat:-8.38,lng:124.16,family:"Papuan – Greater West Bomberai",iso:"---"},
+  {name:"Luul",lat:-8.36,lng:124.18,family:"Papuan – Greater West Bomberai",iso:"---"},
+  {name:"Sar",lat:-8.34,lng:124.19,family:"Papuan – Greater West Bomberai",iso:"mwm"},
+  {name:"Klamu",lat:-8.29,lng:124.18,family:"Papuan – Greater West Bomberai",iso:"nec"},
+  {name:"Teiwa",lat:-8.3,lng:124.22,family:"Papuan – Greater West Bomberai",iso:"twe"},
+  {name:"Kaera",lat:-8.31,lng:124.27,family:"Papuan – Greater West Bomberai",iso:"jka"},
+  {name:"Kroku",lat:-8.27,lng:124.26,family:"Papuan – Greater West Bomberai",iso:"---"},
+  {name:"Blagar",lat:-8.25,lng:124.3,family:"Papuan – Greater West Bomberai",iso:"beu"},
+  {name:"Tereweng",lat:-8.48,lng:124.28,family:"Papuan – Greater West Bomberai",iso:"twg"},
+  {name:"Reta",lat:-8.31,lng:124.36,family:"Papuan – Greater West Bomberai",iso:"ret"},
+  {name:"Klon",lat:-8.41,lng:124.43,family:"Papuan – Greater West Bomberai",iso:"kyo"},
+  {name:"Klon (Bring)",lat:-8.35,lng:124.42,family:"Papuan – Greater West Bomberai",iso:"kyo"},
+  {name:"Klon (Hopter)",lat:-8.4,lng:124.42,family:"Papuan – Greater West Bomberai",iso:"kyo"},
+  {name:"Aadang",lat:-8.19,lng:124.45,family:"Papuan – Greater West Bomberai",iso:"adn"},
+  {name:"Kabola",lat:-8.17,lng:124.54,family:"Papuan – Greater West Bomberai",iso:"klz"},
+  {name:"Hamap",lat:-8.26,lng:124.48,family:"Papuan – Greater West Bomberai",iso:"hmu"},
+  {name:"Kafoa",lat:-8.33,lng:124.43,family:"Papuan – Greater West Bomberai",iso:"kpu"},
+  {name:"Abui",lat:-8.31,lng:124.59,family:"Papuan – Greater West Bomberai",iso:"abz"},
+  {name:"Suboo",lat:-8.28,lng:124.71,family:"Papuan – Greater West Bomberai",iso:"---"},
+  {name:"Papuna",lat:-8.36,lng:124.71,family:"Papuan – Greater West Bomberai",iso:"---"},
+  {name:"Kui",lat:-8.43,lng:124.57,family:"Papuan – Greater West Bomberai",iso:"kvd"},
+  {name:"Kiramang",lat:-8.37,lng:124.76,family:"Papuan – Greater West Bomberai",iso:"---"},
+  {name:"Kamang",lat:-8.27,lng:124.79,family:"Papuan – Greater West Bomberai",iso:"woi"},
+  {name:"Kamang (Atoitaa)",lat:-8.21,lng:124.81,family:"Papuan – Greater West Bomberai",iso:"woi"},
+  {name:"Lembur",lat:-8.19,lng:124.71,family:"Papuan – Greater West Bomberai",iso:"---"},
+  {name:"Kula",lat:-8.21,lng:124.98,family:"Papuan – Greater West Bomberai",iso:"tpg"},
+  {name:"Sawila",lat:-8.29,lng:125.08,family:"Papuan – Greater West Bomberai",iso:"swt"},
+  {name:"Wersing",lat:-8.35,lng:124.95,family:"Papuan – Greater West Bomberai",iso:"kvw"},
+  {name:"Wersing (Taramana)",lat:-8.17,lng:124.85,family:"Papuan – Greater West Bomberai",iso:"kvw"},
+  {name:"Wersing (Kolana)",lat:-8.23,lng:125.13,family:"Papuan – Greater West Bomberai",iso:"kvw"},
+  {name:"Wersing (Maritaing)",lat:-8.3,lng:125.11,family:"Papuan – Greater West Bomberai",iso:"kvw"},
+
+  // A.13.2 North Halmahera
+  {name:"W. Makian",lat:0.33,lng:127.38,family:"Papuan – North Halmahera",iso:"mqs"},
+  {name:"Loloda-Laba",lat:1.96,lng:127.77,family:"Papuan – North Halmahera",iso:"loa"},
+  {name:"Galela",lat:1.87,lng:127.83,family:"Papuan – North Halmahera",iso:"gbi"},
+  {name:"Modole",lat:1.38,lng:127.75,family:"Papuan – North Halmahera",iso:"mqo"},
+  {name:"Pagu",lat:1.25,lng:127.8,family:"Papuan – North Halmahera",iso:"pgu"},
+  {name:"Sahu",lat:1.01,lng:127.49,family:"Papuan – North Halmahera",iso:"saj"},
+  {name:"Tabaru",lat:1.47,lng:127.63,family:"Papuan – North Halmahera",iso:"tby"},
+  {name:"Ternate",lat:0.81,lng:127.33,family:"Papuan – North Halmahera",iso:"tf"},
+  {name:"Tidore",lat:0.68,lng:127.41,family:"Papuan – North Halmahera",iso:"tvo"},
+  {name:"Tobelo",lat:1.64,lng:127.96,family:"Papuan – North Halmahera",iso:"tlb"},
+
+  // A.13.3 Other Papuan
+  {name:"Tambora",lat:-8.21,lng:117.89,family:"Papuan – Other",iso:"xxt"},
+  {name:"Seget",lat:-1.37,lng:131.22,family:"Papuan – Other",iso:"sbg"},
+  {name:"Moi",lat:-0.97,lng:131.52,family:"Papuan – Other",iso:"mxn"},
+  {name:"Kalabra",lat:-1.43,lng:131.62,family:"Papuan – Other",iso:"kzz"},
+  {name:"Moraid",lat:-1.04,lng:131.97,family:"Papuan – Other",iso:"msg"},
+  {name:"Tehit",lat:-1.51,lng:131.99,family:"Papuan – Other",iso:"kps"},
+  {name:"Konda",lat:-1.83,lng:132.06,family:"Papuan – Other",iso:"knd"},
+  {name:"Yahadian",lat:-1.94,lng:132.1,family:"Papuan – Other",iso:"ner"},
+  {name:"Abun",lat:-0.57,lng:132.42,family:"Papuan – Other",iso:"kgr"},
+  {name:"Duriankere",lat:-1.39,lng:130.93,family:"Papuan – Other",iso:"dbn"},
+  {name:"Inanwatan",lat:-2.08,lng:132.16,family:"Papuan – Other",iso:"szp"},
+  {name:"Puragi",lat:-2.06,lng:132.3,family:"Papuan – Other",iso:"pru"},
+  {name:"Kais",lat:-1.78,lng:132.31,family:"Papuan – Other",iso:"kzm"},
+  {name:"Kokoda",lat:-2.13,lng:132.45,family:"Papuan – Other",iso:"xod"},
+  {name:"Kaburi",lat:-1.93,lng:132.53,family:"Papuan – Other",iso:"uka"},
+  {name:"Dombano/Arandai",lat:-2.08,lng:132.98,family:"Papuan – Other",iso:"jbj"},
+  {name:"Kemberano",lat:-2.24,lng:132.99,family:"Papuan – Other",iso:"bzp"},
+  {name:"Maybrat",lat:-1.37,lng:132.59,family:"Papuan – Other",iso:"ayz"},
+  {name:"Karon Dori",lat:-0.79,lng:132.66,family:"Papuan – Other",iso:"kgw"},
+  {name:"Mor",lat:-2.86,lng:132.85,family:"Papuan – Other",iso:"moq"},
+  {name:"Tanahmerah",lat:-2.55,lng:133.18,family:"Papuan – Other",iso:"tcm"},
+  {name:"Moskona",lat:-1.62,lng:133.15,family:"Papuan – Other",iso:"mtj"},
+  {name:"Meyah",lat:-1.18,lng:133.62,family:"Papuan – Other",iso:"mej"},
+  {name:"Sougb",lat:-1.5,lng:133.95,family:"Papuan – Other",iso:"mnx"},
+  {name:"Mpur",lat:-0.75,lng:133.17,family:"Papuan – Other",iso:"akc"},
+  {name:"Mansim",lat:-0.92,lng:134.01,family:"Papuan – Other",iso:"---"},
+  {name:"Hatam",lat:-1.14,lng:134.04,family:"Papuan – Other",iso:"had"},
+  {name:"Mairasi",lat:-3.45,lng:134.07,family:"Papuan – Other",iso:"zrs"},
+  {name:"Semimi",lat:-3.72,lng:134.45,family:"Papuan – Other",iso:"etz"},
+  {name:"Mer",lat:-3.38,lng:134.73,family:"Papuan – Other",iso:"mnu"},
+  {name:"Tunggare",lat:-3.37,lng:135.55,family:"Papuan – Other",iso:"trt"},
+  {name:"Barapasi",lat:-2.29,lng:137.05,family:"Papuan – Other",iso:"brp"},
+  {name:"Kehu",lat:-3.19,lng:136.14,family:"Papuan – Other",iso:"khh"},
+  {name:"Yawa",lat:-1.77,lng:136.26,family:"Papuan – Other",iso:"yva"},
+  {name:"Saweru",lat:-1.91,lng:136.3,family:"Papuan – Other",iso:"swr"},
+  {name:"Damal",lat:-4.17,lng:137.5,family:"Papuan – Other",iso:"uhn"},
+  {name:"Samarokena",lat:-1.85,lng:138.34,family:"Papuan – Other",iso:"tmj"},
+  {name:"Airoran",lat:-1.85,lng:138.16,family:"Papuan – Other",iso:"air"},
+  {name:"Kwerba",lat:-2.21,lng:138.39,family:"Papuan – Other",iso:"kwe"},
+  {name:"Kwerba Mamberamo",lat:-2.56,lng:138.44,family:"Papuan – Other",iso:"xwr"},
+  {name:"Isirawa",lat:-1.89,lng:138.59,family:"Papuan – Other",iso:"srl"},
+  {name:"Burmeso",lat:-2.48,lng:138.2,family:"Papuan – Other",iso:"bzu"}
+];
+
+// Build legend
+const legendEl = document.getElementById('legend-items');
+const familyCounts = {};
+languages.forEach(l => { familyCounts[l.family] = (familyCounts[l.family]||0)+1; });
+Object.keys(FAMILIES).forEach(fam => {
+  const div = document.createElement('div');
+  div.className = 'legend-item';
+  div.innerHTML = `<div class="legend-dot" style="background:${FAMILIES[fam]}"></div><span class="legend-label">${fam}</span><span class="legend-count">${familyCounts[fam]||0}</span>`;
+  legendEl.appendChild(div);
+});
+
+// Init map with layers
+const darkTiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  attribution: '© OpenStreetMap © CARTO',
+  subdomains: 'abcd',
+  maxZoom: 19
+});
+
+const lightTiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+  attribution: '© OpenStreetMap © CARTO',
+  subdomains: 'abcd',
+  maxZoom: 19
+});
+
+const map = L.map('map', {
+  center: [-3, 125],
+  zoom: 5,
+  preferCanvas: true,
+  layers: [darkTiles] // Default layer
+});
+
+// Marker Layer Group
+const markerLayer = L.layerGroup().addTo(map);
+
+// Render markers
+function renderMarkers(dataToRender) {
+  markerLayer.clearLayers();
+  dataToRender.forEach(lang => {
+    const color = FAMILIES[lang.family] || '#aaa';
+    const marker = L.circleMarker([lang.lat, lang.lng], {
+      radius: 5,
+      fillColor: color,
+      color: 'rgba(120,120,120,0.5)',
+      weight: 1,
+      fillOpacity: 0.85
+    }).addTo(markerLayer);
+
+    marker.bindPopup(`
+      <div class="popup-title">${lang.name}</div>
+      <div class="popup-family" style="background:${color}88; border:1px solid ${color}">${lang.family}</div>
+      <div class="popup-row">ISO 639-3: <span>${lang.iso}</span></div>
+      <div class="popup-row">Coordinates: <span>${lang.lat.toFixed(2)}, ${lang.lng.toFixed(2)}</span></div>
+    `, {maxWidth: 220});
+    
+    marker.on('mouseover', function() { this.openPopup(); });
+  });
+  document.getElementById('count').textContent = `${dataToRender.length} languages displayed`;
+}
+
+renderMarkers(languages);
+
+// Search functionality
+document.getElementById('search').addEventListener('input', function(e) {
+  const searchTerm = e.target.value.toLowerCase();
+  const filteredLanguages = languages.filter(lang => 
+    lang.name.toLowerCase().includes(searchTerm) || 
+    lang.family.toLowerCase().includes(searchTerm) || 
+    lang.iso.toLowerCase().includes(searchTerm)
+  );
+  renderMarkers(filteredLanguages);
+});
+
+// Theme Toggle Logic
+const toggleBtn = document.getElementById('theme-toggle');
+toggleBtn.addEventListener('click', () => {
+  const body = document.body;
+  body.classList.toggle('light-mode');
+  
+  if (body.classList.contains('light-mode')) {
+    map.removeLayer(darkTiles);
+    map.addLayer(lightTiles);
+    toggleBtn.textContent = '☾ Dark Mode';
+  } else {
+    map.removeLayer(lightTiles);
+    map.addLayer(darkTiles);
+    toggleBtn.textContent = '☀ Light Mode';
+  }
+});
+</script>
+</body>
+</html>
