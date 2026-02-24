@@ -72,7 +72,8 @@
   
   .legend-item { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; cursor: pointer; padding: 2px 4px; border-radius: 4px; }
   .legend-item:hover { background: var(--hover-bg); }
-  .legend-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; border: 1px solid rgba(100,100,100,0.3); }
+  /* Removed fixed border-radius here so we can apply it inline for squares vs circles */
+  .legend-dot { width: 12px; height: 12px; flex-shrink: 0; border: 1px solid rgba(100,100,100,0.3); }
   .legend-label { font-size: 11px; color: var(--text-main); }
   .legend-count { font-size: 10px; color: var(--text-muted); margin-left: auto; }
   
@@ -83,6 +84,9 @@
   .popup-family { font-size: 11px; padding: 2px 8px; border-radius: 12px; display: inline-block; margin-bottom: 6px; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
   .popup-row { font-size: 11px; color: var(--text-muted); margin: 2px 0; }
   .popup-row span { color: var(--text-main); }
+  
+  /* Custom Square Icon container adjustment */
+  .custom-square { background: transparent; border: none; }
 </style>
 </head>
 <body>
@@ -721,10 +725,14 @@ const languages = [
 const legendEl = document.getElementById('legend-items');
 const familyCounts = {};
 languages.forEach(l => { familyCounts[l.family] = (familyCounts[l.family]||0)+1; });
+
 Object.keys(FAMILIES).forEach(fam => {
+  const isPapuanFamily = fam.toLowerCase().includes('papuan');
+  const borderRadius = isPapuanFamily ? '0' : '50%'; // Apply sharp corners for Papuan families
+  
   const div = document.createElement('div');
   div.className = 'legend-item';
-  div.innerHTML = `<div class="legend-dot" style="background:${FAMILIES[fam]}"></div><span class="legend-label">${fam}</span><span class="legend-count">${familyCounts[fam]||0}</span>`;
+  div.innerHTML = `<div class="legend-dot" style="background:${FAMILIES[fam]}; border-radius: ${borderRadius};"></div><span class="legend-label">${fam}</span><span class="legend-count">${familyCounts[fam]||0}</span>`;
   legendEl.appendChild(div);
 });
 
@@ -756,13 +764,28 @@ function renderMarkers(dataToRender) {
   markerLayer.clearLayers();
   dataToRender.forEach(lang => {
     const color = FAMILIES[lang.family] || '#aaa';
-    const marker = L.circleMarker([lang.lat, lang.lng], {
-      radius: 5,
-      fillColor: color,
-      color: 'rgba(120,120,120,0.5)',
-      weight: 1,
-      fillOpacity: 0.85
-    }).addTo(markerLayer);
+    const isPapuan = lang.family.toLowerCase().includes('papuan');
+    
+    let marker;
+    if (isPapuan) {
+      // Create a square icon for Papuan languages
+      const squareIcon = L.divIcon({
+        className: 'custom-square',
+        html: `<div style="background-color: ${color}; width: 10px; height: 10px; border: 1px solid rgba(120,120,120,0.5); box-sizing: border-box; opacity: 0.85;"></div>`,
+        iconSize: [10, 10],
+        iconAnchor: [5, 5]
+      });
+      marker = L.marker([lang.lat, lang.lng], { icon: squareIcon }).addTo(markerLayer);
+    } else {
+      // Default to circle markers for Austronesian languages
+      marker = L.circleMarker([lang.lat, lang.lng], {
+        radius: 5,
+        fillColor: color,
+        color: 'rgba(120,120,120,0.5)',
+        weight: 1,
+        fillOpacity: 0.85
+      }).addTo(markerLayer);
+    }
 
     marker.bindPopup(`
       <div class="popup-title">${lang.name}</div>
