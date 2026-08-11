@@ -1,0 +1,38 @@
+[
+  {
+    "suco": "Uatu Haco",
+    "admin_post": "Venilale, Baucau",
+    "lat": -8.689838,
+    "lng": 126.436855,
+    "type": "exclave-correction",
+    "title": "Uatu Haco — Osso-Gori exclave is Makasae, not Midiki",
+    "body": "Suco-wide census data suggests strong Midiki dominance, but aldeia-level fieldwork records show Osso-Gori (620 people) and Lia-Bala (857 people) are actually Makasae-speaking. The true split is closer to 58% Midiki / 42% Makasae. Osso-Gori is a genuine geographic exclave — a separate polygon piece cut off by neighboring suco Uai-Oli — shown here at its own centroid. Lia-Bala is contiguous with the rest of the suco on the ground, but the shapefile does not preserve it as a separate piece, so it cannot be mapped separately (only flagged here in text)."
+  },
+  {
+    "suco": "Bado-Ho'o",
+    "admin_post": "Venilale, Baucau",
+    "lat": -8.649459,
+    "lng": 126.439552,
+    "type": "exclave-correction",
+    "title": "Bado-Ho'o — Uai-Bobo and Uai-Cana exclave is Makasae, not Midiki",
+    "body": "Aldeia-level fieldwork records show Uai-Bobo (676 people) and Uai-Cana (284 people) are Makasae-speaking rather than Midiki. The true split is closer to 69% Midiki / 31% Makasae. Both Makasae aldeias fall inside the suco's one mappable exclave, shown here at its own centroid — unlike Uatu Haco's Lia-Bala, this correction is fully captured by the geometry."
+  },
+  {
+    "suco": "Builale",
+    "admin_post": "Ossu, Viqueque",
+    "lat": -8.688866,
+    "lng": 126.354088,
+    "type": "placeholder",
+    "title": "Builale — aldeia-level attribution still an open task",
+    "body": "The largest combined Kairui-Midiki suco nationally. Aldeia population data has been obtained (5 aldeias, suco-office board total 2,319 vs. census total 2,194 — different collection dates, both real), but no aldeia-level language attribution has been confirmed yet. The map currently shows a uniform population-weighted split (87.1% Kairui+Midiki applied identically to every aldeia), explicitly a placeholder — both Uatu Haco and Bado-Ho'o turned out to have real internal variation once checked, so this figure should not be trusted at the aldeia level yet."
+  },
+  {
+    "suco": "Uai-Mori",
+    "admin_post": "Viqueque, Viqueque",
+    "lat": -8.848819,
+    "lng": 126.325055,
+    "type": "unresolved",
+    "title": "Uai-Mori — unresolved boundary conflict",
+    "body": "Fieldwork (a site visit and conversation with the Xefe Suco) suggests the current suco may occupy only a small northern area (4 aldeias: Uma Liurai, Uma Bo'o, Uaibubo, Lulei), while the shapefile's polygon — and an official Direcção Nacional de Estatística Suco Report — describes a much larger area consistent with a different, southern location. This is a genuine unresolved conflict, not a data-pipeline bug, and has not been \"fixed\" without further fieldwork confirmation of whether Aldeia Uatuleso and Aldeia Mea-Uai (the disputed southern aldeias) are still officially registered under Suco Uai-Mori."
+  }
+]

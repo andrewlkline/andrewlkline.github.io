@@ -1,0 +1,603 @@
+<!doctype html>
+<html lang="en" data-theme="earthy">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2022 Census Mother-Tongue Maps — Andrew Kline</title>
+<meta name="description" content="Interactive maps of mother-tongue distribution from the 2022 Timor-Leste census, suco by suco.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="../assets/img/favicon-32.png" sizes="32x32">
+<link rel="icon" href="../assets/img/favicon-16.png" sizes="16x16">
+<link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<style>
+  .census-lede {
+    max-width: 720px;
+  }
+  .methodology-note {
+    border-left: 3px solid var(--color-accent);
+    background: var(--color-bg-alt);
+    padding: 1rem 1.3rem;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    color: var(--color-text-muted);
+    font-size: 0.92rem;
+    margin: 1.5rem 0 2rem;
+  }
+  .methodology-note p { margin: 0 0 0.6em; }
+  .methodology-note p:last-child { margin-bottom: 0; }
+
+  .map-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  .map-controls select {
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    padding: 0.5rem 0.7rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-bg);
+    color: var(--color-text);
+    min-width: 260px;
+  }
+  .map-controls .button {
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+  }
+
+  .map-shell {
+    position: relative;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+  }
+  #census-map {
+    height: 620px;
+    width: 100%;
+    background: var(--color-bg-alt);
+  }
+
+  .map-legend {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    z-index: 500;
+    background: rgba(254, 253, 251, 0.94);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 0.7rem 0.9rem;
+    font-size: 0.78rem;
+    color: var(--color-text);
+    max-height: 260px;
+    overflow-y: auto;
+    max-width: 220px;
+  }
+  [data-theme="earthy"] .map-legend { background: rgba(251, 246, 238, 0.95); }
+  .map-legend-title {
+    font-weight: 700;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-text-muted);
+    margin-bottom: 0.4rem;
+  }
+  .map-legend-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 0.2rem;
+    line-height: 1.3;
+  }
+  .map-legend-swatch {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    border: 1px solid rgba(0,0,0,0.15);
+  }
+
+  .leaflet-popup-content {
+    font-family: var(--font-sans);
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+  .popup-title {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 0.3rem;
+    color: var(--color-heading);
+  }
+  .popup-meta {
+    color: var(--color-text-muted);
+    font-size: 0.78rem;
+    margin-bottom: 0.5rem;
+  }
+  .popup-tier {
+    display: inline-block;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    background: var(--color-bg-alt);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-muted);
+    margin-top: 0.4rem;
+  }
+  .annotation-popup .popup-title { color: #a23503; }
+  .annotation-popup .popup-body { font-size: 0.85rem; }
+
+  .table-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin: 2rem 0 0.75rem;
+  }
+  .table-search {
+    font-family: var(--font-sans);
+    font-size: 0.92rem;
+    padding: 0.5rem 0.8rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-bg);
+    color: var(--color-text);
+    min-width: 240px;
+  }
+  .table-count {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+  }
+  .census-table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    margin-bottom: 2rem;
+  }
+  table.census-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+  }
+  table.census-table th, table.census-table td {
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--color-border);
+    white-space: nowrap;
+  }
+  table.census-table thead th {
+    background: var(--color-bg-alt);
+    color: var(--color-text-muted);
+    font-weight: 600;
+    font-size: 0.76rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    user-select: none;
+    position: sticky;
+    top: 0;
+  }
+  table.census-table thead th:hover { color: var(--color-accent); }
+  table.census-table thead th.sorted::after { content: " \25BE"; }
+  table.census-table thead th.sorted.asc::after { content: " \25B4"; }
+  table.census-table tbody tr:hover { background: var(--color-bg-alt); cursor: pointer; }
+  table.census-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+  .loading-note {
+    color: var(--color-text-muted);
+    font-style: italic;
+    padding: 2rem 0;
+    text-align: center;
+  }
+</style>
+</head>
+<body data-lang="en">
+
+<header class="site-header">
+  <div class="container">
+    <a class="site-title" href="../">Andrew Kline</a>
+    <nav class="site-nav" aria-label="Primary">
+      <a href="../">
+        <span lang="en">About</span><span lang="tet">Kona-ba Ha'u</span>
+      </a>
+      <a href="../research/">
+        <span lang="en">Research</span><span lang="tet">Peskiza</span>
+      </a>
+      <a href="../publications/">
+        <span lang="en">Publications</span><span lang="tet">Publikasaun</span>
+      </a>
+      <a href="../teaching/">
+        <span lang="en">Teaching</span><span lang="tet">Hanorin</span>
+      </a>
+      <a href="../fieldwork/">
+        <span lang="en">Fieldwork</span><span lang="tet">Peskiza iha terenu</span>
+      </a>
+      <a href="../resources/">
+        <span lang="en">Resources</span><span lang="tet">Rekursu</span>
+      </a>
+      <a href="../assets/pdf/andrew_kline_cv.pdf">
+        <span lang="en">CV</span><span lang="tet">CV</span>
+      </a>
+      <div class="nav-right">
+        <button id="lang-toggle" data-current="en" aria-label="Switch to Tetun">
+          <span class="lang-option lang-option-en">EN</span> / <span class="lang-option lang-option-tet">TET</span>
+        </button>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+    <h1>2022 Census Mother-Tongue Maps</h1>
+    <p class="page-lede census-lede">
+      Interactive suco-level maps of home-language distribution from the 2022 Timor-Leste
+      Population and Housing Census, with a focus on the Kairui-Midiki (Kawaimina) homeland
+      in Baucau, Manatuto, and Viqueque. Updates
+      <a href="https://www.press.uni-mainz.de/?option=com_jbibtex&view=publication&Itemid=249&id=228" target="_blank" rel="noopener">Williams-van Klinken &amp; Williams (2015)</a>
+      with the 2022 census and original fieldwork.
+    </p>
+
+    <div class="methodology-note">
+      <p><strong>A methodological note:</strong> the 2022 census asked mother tongue as a
+      checklist of 33 yes/no items, not a single-choice question like 2010 and 2015. People
+      could (and did) check more than one language, so 2022 totals do not sum to the
+      population and are <strong>not directly comparable</strong> to earlier census years.
+      Tetun Prasa in particular jumps from 30.5% (2015) to 66.8% (2022) &mdash; almost
+      certainly a checklist artifact, not real language shift.</p>
+      <p>438 of 452 sucos are matched to a 2020-vintage boundary shapefile (no shapefile
+      reflecting current suco boundaries exists publicly); 14 unmatched sucos, mostly in
+      Dili, are not shown. Map colors for &ldquo;dominant vernacular&rdquo; exclude Tetun
+      Prasa to recover a clearer picture of vernacular-language geography.</p>
+    </div>
+
+    <div class="map-controls">
+      <select id="lang-select" aria-label="Choose what to map"></select>
+      <button id="kawaimina-btn" class="button secondary" type="button">Zoom to Kawaimina homeland</button>
+      <button id="reset-btn" class="button secondary" type="button">Reset view</button>
+    </div>
+
+    <div class="map-shell">
+      <div id="census-map"></div>
+      <div class="map-legend" id="map-legend"></div>
+    </div>
+    <p style="font-size:0.8rem; color:var(--color-text-muted); margin-top:0;">
+      Markers in the homeland area mark known corrections from suco-office fieldwork records &mdash;
+      click a marker for details. Click any suco (on the map or in the table below) to zoom to it.
+    </p>
+
+    <div class="table-controls">
+      <input type="text" id="table-search" class="table-search" placeholder="Search municipality, admin post, or suco&hellip;">
+      <span class="table-count" id="table-count"></span>
+    </div>
+    <div class="census-table-wrap">
+      <table class="census-table" id="census-table">
+        <thead>
+          <tr>
+            <th data-key="municipality">Municipality</th>
+            <th data-key="admin_post">Admin Post</th>
+            <th data-key="census_suco">Suco</th>
+            <th data-key="total" class="num">Population</th>
+            <th data-key="dominant_vernacular">Dominant Vernacular</th>
+            <th data-key="selected_count" class="num" id="th-selected-count">Selected Lang. (n)</th>
+            <th data-key="selected_pct" class="num" id="th-selected-pct">Selected Lang. (%)</th>
+          </tr>
+        </thead>
+        <tbody id="census-table-body">
+          <tr><td colspan="7" class="loading-note">Loading census data&hellip;</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div>
+      <span lang="en">&copy; 2026 Andrew Kline</span>
+      <span lang="tet">&copy; 2026 Andrew Kline</span>
+    </div>
+    <div class="footer-links">
+      <a href="mailto:klineal@hawaii.edu">Email</a>
+      <a href="https://orcid.org/0009-0003-2895-2126" target="_blank" rel="noopener">ORCID</a>
+      <a href="https://scholar.google.com/citations?user=u6OPEDUAAAAJ&hl=en" target="_blank" rel="noopener">Google Scholar</a>
+    </div>
+  </div>
+</footer>
+
+<script src="../assets/js/main.js"></script>
+<script>
+(function () {
+  var LANG_COLS = ['Adabe','Atauran','Baikenu','Bekais','Bunak','Dadu’a','Fataluku','Galoli',
+    'Habun','Idalaka','Idate','Isni','Kairui','Kawaimina','Kemak','Lakalei','Lolein',
+    'Makalero','Makasai','Makuva','Mambai','Midiki','Nanaek','Naueti','Rahesuk',
+    'Raklungu','Resuk','Sa’ani','Waima’a','Tetun Terik','Tokodede'];
+  var EXTRA_COLS = ['Tetun Prasa', 'Seluk-seluk'];
+
+  var VERNACULAR_COLORS = {
+    'Baikenu':'#1f77b4','Bekais':'#aec7e8','Bunak':'#ff7f0e','Dadu’a':'#ffbb78',
+    'Fataluku':'#2ca02c','Galoli':'#98df8a','Habun':'#d62728','Idate':'#ff9896',
+    'Isni':'#9467bd','Kairui':'#c5b0d5','Kemak':'#8c564b','Lakalei':'#c49c94',
+    'Makalero':'#e377c2','Makasai':'#f7b6d2','Mambai':'#7f7f7f','Midiki':'#c7c7c7',
+    'Naueti':'#bcbd22','Raklungu':'#dbdb8d','Resuk':'#17becf','Sa’ani':'#9edae5',
+    'Tetun Terik':'#393b79','Tokodede':'#5254a3','Waima’a':'#6b6ecf','Tetun Prasa':'#d9008c'
+  };
+
+  var ORANGE_BINS = [0,10,20,30,40,50,60,70,80,90,100];
+  var ORANGE_RAMP = ['#fff5eb','#fee8d2','#fdd5ad','#fdb97d','#fd9c51','#f87e2b','#e95e0d','#ce4401','#a23503','#7f2704'];
+
+  var KAWAIMINA_FAMILY = ['Kairui', 'Midiki', 'KairuiMidiki', 'Kawaimina', 'Naueti', 'Waima’a'];
+
+  var LANG_LABELS = { 'KairuiMidiki': 'Kairui + Midiki (combined)' };
+  function labelFor(code) { return LANG_LABELS[code] || code; }
+
+  var map = L.map('census-map', { scrollWheelZoom: true }).setView([-8.85, 125.9], 9);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    subdomains: 'abcd',
+    maxZoom: 16
+  }).addTo(map);
+
+  var NATIONAL_VIEW = { center: [-8.85, 125.9], zoom: 9 };
+
+  var mode = 'dominant'; // 'dominant' or a language column key
+  var geoLayer = null;
+  var sucoLayers = {};
+  var features = [];
+  var sortKey = 'total';
+  var sortAsc = false;
+
+  function getDominant(props) {
+    var best = null, bestVal = -1;
+    for (var i = 0; i < LANG_COLS.length; i++) {
+      var v = props[LANG_COLS[i]] || 0;
+      if (v > bestVal) { bestVal = v; best = LANG_COLS[i]; }
+    }
+    return best;
+  }
+
+  function getValueForMode(props, m) {
+    if (m === 'KairuiMidiki') return (props['Kairui'] || 0) + (props['Midiki'] || 0);
+    return props[m] || 0;
+  }
+
+  function orangeColor(pct) {
+    for (var i = 0; i < ORANGE_BINS.length - 1; i++) {
+      if (pct <= ORANGE_BINS[i + 1] || i === ORANGE_BINS.length - 2) return ORANGE_RAMP[i];
+    }
+    return ORANGE_RAMP[ORANGE_RAMP.length - 1];
+  }
+
+  function colorFor(props) {
+    if (mode === 'dominant') {
+      return VERNACULAR_COLORS[getDominant(props)] || '#cccccc';
+    }
+    var val = getValueForMode(props, mode);
+    var total = props.total || 1;
+    return orangeColor((val / total) * 100);
+  }
+
+  function styleFeature(feature) {
+    return { fillColor: colorFor(feature.properties), color: '#fff', weight: 0.6, fillOpacity: 0.85 };
+  }
+
+  function popupHtml(props) {
+    var dom = getDominant(props);
+    var html = '<div class="popup-title">' + props.census_suco + '</div>';
+    html += '<div class="popup-meta">' + props.admin_post + ', ' + props.municipality + ' &middot; population ' + (props.total || 0).toLocaleString() + '</div>';
+    html += '<div>Dominant vernacular: <strong>' + dom + '</strong> (' + (props[dom]||0).toLocaleString() + ')</div>';
+    if (mode !== 'dominant') {
+      var val = getValueForMode(props, mode);
+      var pct = ((val / (props.total||1)) * 100).toFixed(1);
+      html += '<div>' + labelFor(mode) + ': <strong>' + val.toLocaleString() + '</strong> (' + pct + '%)</div>';
+    }
+    if (props.tier && props.tier !== 'exact_triple') {
+      html += '<div class="popup-tier">boundary match: ' + props.tier.replace(/_/g, ' ') + '</div>';
+    }
+    return html;
+  }
+
+  function restyleAll() {
+    if (geoLayer) geoLayer.setStyle(styleFeature);
+    renderLegend();
+    renderTable();
+    updateTableHeaders();
+  }
+
+  function renderLegend() {
+    var el = document.getElementById('map-legend');
+    if (mode === 'dominant') {
+      var present = {};
+      features.forEach(function (f) { present[getDominant(f.properties)] = true; });
+      var langs = Object.keys(present).sort();
+      var html = '<div class="map-legend-title">Dominant vernacular</div>';
+      langs.forEach(function (l) {
+        html += '<div class="map-legend-row"><span class="map-legend-swatch" style="background:' + (VERNACULAR_COLORS[l] || '#ccc') + '"></span>' + l + '</div>';
+      });
+      el.innerHTML = html;
+    } else {
+      var html2 = '<div class="map-legend-title">' + labelFor(mode) + ' (% of suco pop.)</div>';
+      for (var i = 0; i < ORANGE_RAMP.length; i++) {
+        html2 += '<div class="map-legend-row"><span class="map-legend-swatch" style="background:' + ORANGE_RAMP[i] + '"></span>' + ORANGE_BINS[i] + '&ndash;' + ORANGE_BINS[i+1] + '%</div>';
+      }
+      el.innerHTML = html2;
+    }
+  }
+
+  function flyToSuco(name) {
+    var layer = sucoLayers[name];
+    if (layer) { map.flyToBounds(layer.getBounds(), { maxZoom: 12, duration: 0.6 }); layer.openPopup(); }
+  }
+
+  // ---- Table ----
+  function updateTableHeaders() {
+    document.getElementById('th-selected-count').textContent = mode === 'dominant' ? 'Dominant Lang. (n)' : labelFor(mode) + ' (n)';
+    document.getElementById('th-selected-pct').textContent = mode === 'dominant' ? 'Dominant Lang. (%)' : labelFor(mode) + ' (%)';
+  }
+
+  function rowsForTable() {
+    var q = document.getElementById('table-search').value.trim().toLowerCase();
+    var rows = features.map(function (f) {
+      var p = f.properties;
+      var dom = getDominant(p);
+      var selVal = mode === 'dominant' ? (p[dom] || 0) : getValueForMode(p, mode);
+      var selPct = (selVal / (p.total || 1)) * 100;
+      return {
+        municipality: p.municipality, admin_post: p.admin_post, census_suco: p.census_suco,
+        total: p.total || 0, dominant_vernacular: dom, selected_count: selVal, selected_pct: selPct
+      };
+    });
+    if (q) {
+      rows = rows.filter(function (r) {
+        return (r.municipality + ' ' + r.admin_post + ' ' + r.census_suco).toLowerCase().indexOf(q) !== -1;
+      });
+    }
+    rows.sort(function (a, b) {
+      var av = a[sortKey], bv = b[sortKey];
+      if (typeof av === 'string') { av = av.toLowerCase(); bv = bv.toLowerCase(); }
+      if (av < bv) return sortAsc ? -1 : 1;
+      if (av > bv) return sortAsc ? 1 : -1;
+      return 0;
+    });
+    return rows;
+  }
+
+  function renderTable() {
+    var rows = rowsForTable();
+    var tbody = document.getElementById('census-table-body');
+    if (!rows.length) {
+      tbody.innerHTML = '<tr><td colspan="7" class="loading-note">No sucos match that search.</td></tr>';
+    } else {
+      var html = rows.map(function (r) {
+        return '<tr data-suco="' + r.census_suco.replace(/"/g, '&quot;') + '">' +
+          '<td>' + r.municipality + '</td>' +
+          '<td>' + r.admin_post + '</td>' +
+          '<td>' + r.census_suco + '</td>' +
+          '<td class="num">' + r.total.toLocaleString() + '</td>' +
+          '<td>' + r.dominant_vernacular + '</td>' +
+          '<td class="num">' + Math.round(r.selected_count).toLocaleString() + '</td>' +
+          '<td class="num">' + r.selected_pct.toFixed(1) + '%</td>' +
+          '</tr>';
+      }).join('');
+      tbody.innerHTML = html;
+    }
+    document.getElementById('table-count').textContent = rows.length + ' of ' + features.length + ' sucos';
+
+    Array.prototype.forEach.call(tbody.querySelectorAll('tr[data-suco]'), function (tr) {
+      tr.addEventListener('click', function () { flyToSuco(tr.getAttribute('data-suco')); });
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('#census-table thead th'), function (th) {
+      th.classList.toggle('sorted', th.getAttribute('data-key') === sortKey);
+      th.classList.toggle('asc', th.getAttribute('data-key') === sortKey && sortAsc);
+    });
+  }
+
+  document.querySelectorAll('#census-table thead th').forEach(function (th) {
+    th.addEventListener('click', function () {
+      var key = th.getAttribute('data-key');
+      if (sortKey === key) { sortAsc = !sortAsc; } else { sortKey = key; sortAsc = key === 'municipality' || key === 'admin_post' || key === 'census_suco' || key === 'dominant_vernacular'; }
+      renderTable();
+    });
+  });
+  document.getElementById('table-search').addEventListener('input', renderTable);
+
+  // ---- Controls ----
+  var select = document.getElementById('lang-select');
+  function addOption(group, value, label) {
+    var opt = document.createElement('option');
+    opt.value = value; opt.textContent = label;
+    group.appendChild(opt);
+  }
+  (function buildSelect() {
+    var domGroup = document.createElement('optgroup');
+    domGroup.label = 'Overview';
+    addOption(domGroup, 'dominant', 'Dominant vernacular (excl. Tetun Prasa)');
+    select.appendChild(domGroup);
+
+    var kwGroup = document.createElement('optgroup');
+    kwGroup.label = 'Kawaimina family';
+    addOption(kwGroup, 'KairuiMidiki', 'Kairui + Midiki (combined)');
+    ['Kairui', 'Midiki', 'Kawaimina', 'Naueti', 'Waima’a'].forEach(function (l) { addOption(kwGroup, l, l); });
+    select.appendChild(kwGroup);
+
+    var allGroup = document.createElement('optgroup');
+    allGroup.label = 'All languages (A–Z)';
+    LANG_COLS.concat(EXTRA_COLS).slice().sort().forEach(function (l) { addOption(allGroup, l, l); });
+    select.appendChild(allGroup);
+  })();
+  select.addEventListener('change', function () { mode = select.value; restyleAll(); });
+
+  document.getElementById('reset-btn').addEventListener('click', function () {
+    map.setView(NATIONAL_VIEW.center, NATIONAL_VIEW.zoom);
+  });
+
+  document.getElementById('kawaimina-btn').addEventListener('click', function () {
+    select.value = 'KairuiMidiki';
+    mode = 'KairuiMidiki';
+    restyleAll();
+    // Bound to sucos with a real Kawaimina-family concentration, restricted to
+    // the homeland municipalities -- a raw-count-only or municipality-only
+    // filter each pull in stray high-count/wide-area sucos that barely zoom in
+    // (33-item checklist means people far from the homeland can still report a
+    // Kawaimina-family language as a secondary one; Baucau/Manatuto/Viqueque
+    // alone span most of the country). The combination isolates the actual
+    // cluster -- verified to include all four fieldwork-annotated sucos below.
+    var homelandMunis = ['Baucau', 'Manatuto', 'Viqueque'];
+    var group = [];
+    features.forEach(function (f) {
+      var p = f.properties;
+      var kwPct = ((p['Kairui'] || 0) + (p['Midiki'] || 0) + (p['Naueti'] || 0) + (p['Waima’a'] || 0) + (p['Kawaimina'] || 0)) / (p.total || 1) * 100;
+      if (homelandMunis.indexOf(p.municipality) !== -1 && kwPct >= 15) {
+        var layer = sucoLayers[p.census_suco];
+        if (layer) group.push(layer);
+      }
+    });
+    if (group.length) map.flyToBounds(L.featureGroup(group).getBounds(), { duration: 0.6, padding: [40, 40] });
+  });
+
+  // ---- Load data ----
+  fetch('../assets/data/suco_census_2022.geojson').then(function (r) { return r.json(); }).then(function (gj) {
+    features = gj.features;
+    geoLayer = L.geoJSON(gj, {
+      style: styleFeature,
+      onEachFeature: function (feature, layer) {
+        sucoLayers[feature.properties.census_suco] = layer;
+        layer.bindPopup(function () { return popupHtml(feature.properties); });
+        layer.on('mouseover', function () { layer.setStyle({ weight: 2, color: '#4e2a1a' }); });
+        layer.on('mouseout', function () { layer.setStyle({ weight: 0.6, color: '#fff' }); });
+      }
+    }).addTo(map);
+    restyleAll();
+  }).catch(function (err) {
+    document.getElementById('census-table-body').innerHTML = '<tr><td colspan="7" class="loading-note">Could not load census data: ' + err + '</td></tr>';
+  });
+
+  fetch('../assets/data/kawaimina_annotations.json').then(function (r) { return r.json(); }).then(function (items) {
+    items.forEach(function (item) {
+      var marker = L.circleMarker([item.lat, item.lng], {
+        radius: 8, color: '#4e2a1a', weight: 2, fillColor: '#fdd200', fillOpacity: 0.9
+      }).addTo(map);
+      marker.bindPopup(
+        '<div class="annotation-popup"><div class="popup-title">' + item.title + '</div>' +
+        '<div class="popup-meta">' + item.suco + ', ' + item.admin_post + '</div>' +
+        '<div class="popup-body">' + item.body + '</div></div>',
+        { maxWidth: 320 }
+      );
+    });
+  });
+})();
+</script>
+</body>
+</html>
