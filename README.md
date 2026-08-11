@@ -4,7 +4,7 @@ Source for Andrew Kline's academic website, deployed as the main GitHub
 Pages user site at `https://andrewlkline.github.io/`. Plain HTML/CSS/JS,
 no build step required.
 
-This replaced the previous hand-built site in August 2026; the old
+This replaced the previous site in August 2026; the old
 content (with full history) is archived at
 [andrewlkline-site-archive](https://github.com/andrewlkline/andrewlkline-site-archive),
 and this repo's own git history still has the old commits underneath the
