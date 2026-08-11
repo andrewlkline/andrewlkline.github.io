@@ -1,554 +1,321 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="en" data-theme="earthy">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Timor-Leste Language Resources | Andrew Kline</title>
-    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Merriweather:wght@300;400;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
-    <style>
-        :root {
-            /* UH Manoa Brand Colors */
-            --uh-green: #024731; 
-            --uh-silver: #C8C8C8;
-            --text-dark: #333;
-            --bg-light: #f9f9f9;
-        }
-
-        body {
-            font-family: 'Merriweather', serif;
-            line-height: 1.6;
-            color: var(--text-dark);
-            margin: 0;
-            padding: 0;
-            background-color: var(--bg-light);
-        }
-
-        /* Typography */
-        h1, h2, h3, h4 {
-            font-family: 'Lato', sans-serif;
-            font-weight: 700;
-            color: var(--uh-green);
-        }
-
-        a {
-            text-decoration: none;
-            color: var(--uh-green);
-            transition: 0.3s;
-        }
-
-        a:hover {
-            color: #000;
-        }
-
-        /* Navigation */
-        nav {
-            background: white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            padding: 1rem 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-        }
-
-        .nav-brand {
-            font-size: 1.5rem;
-            font-weight: bold;
-            font-family: 'Lato', sans-serif;
-        }
-
-        .nav-links a {
-            margin-left: 20px;
-            font-family: 'Lato', sans-serif;
-            font-size: 0.95rem;
-            color: #555;
-        }
-
-        .nav-links a:hover {
-            color: var(--uh-green);
-        }
-
-        /* Hero Section */
-        .hero {
-            text-align: center;
-            padding: 1rem 1rem;
-            background-color: white;
-            border-bottom: 1px solid #eee;
-        }
-
-        .hero h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            color: #666;
-            font-family: 'Lato', sans-serif;
-        }
-
-        /* Content Container */
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem 1rem;
-        }
-/* The Wiki Layout */
-        .wiki-container {
-            display: flex;
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 2rem;
-            gap: 40px;
-        }
-
-        /* Sidebar Navigation */
-        .sidebar {
-            flex: 1;
-            position: sticky; /* Keeps it visible while scrolling */
-            top: 2rem;
-            height: fit-content;
-            border-right: 1px solid #ddd;
-            padding-right: 20px;
-        }
-
-        .sidebar h4 { margin-top: 0; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; color: #888; }
-        .sidebar ul { list-style: none; padding: 0; }
-        .sidebar li { margin-bottom: 10px; }
-        .sidebar a { color: #555; font-family: 'Lato', sans-serif; font-size: 0.95rem; }
-        .sidebar a:hover { color: #024731; font-weight: bold; }
-
-        /* Main Content */
-        .content { flex: 3; }
-        
-        /* Citation Cards */
-        .citation {
-            background: #f9f9f9;
-            padding: 1.5rem;
-            border-radius: 4px;
-            margin-bottom: 1.5rem;
-            border-left: 4px solid #024731;
-        }
-        
-        .citation-title { font-weight: bold; display: block; margin-bottom: 5px; }
-        .citation-meta { font-style: italic; font-size: 0.9rem; color: #666; }
-        .citation-note { margin-top: 10px; font-size: 0.95rem; }
-        
-        /* Tag styling */
-        .tag {
-            display: inline-block;
-            background: #e0e0e0;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-family: 'Lato', sans-serif;
-            margin-right: 5px;
-            color: #333;
-        }
-        
-        /* Mobile adjustment */
-        @media (max-width: 768px) {
-            .wiki-container { flex-direction: column; }
-            .sidebar { position: static; border-right: none; border-bottom: 1px solid #ddd; padding-bottom: 20px; }
-        }
-
-        /* Language Family Badges */
-.family-badge {
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    padding: 3px 8px;
-    border-radius: 4px;
-    color: white;
-    vertical-align: middle;
-    margin-left: 10px;
-    font-weight: bold;
-}
-
-/* Specific Colors */
-.austronesian { background-color: #0077b6; /* Ocean Blue */ }
-.nonAN { background-color: #e07a5f; /* Terra Cotta / Earthy Orange */ }
-
-/* Update the Sidebar to handle sub-groups */
-.sidebar h5 {
-    margin: 20px 0 10px 0;
-    font-size: 0.8rem;
-    color: #333;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 5px;
-}
-
-        /* Button Styling */
-        .btn {
-            display: inline-block;
-            background-color: var(--uh-green);
-            color: white !important;
-            padding: 10px 20px;
-            border-radius: 4px;
-            margin-top: 10px;
-            font-family: 'Lato', sans-serif;
-            font-size: 0.9rem;
-        }
-
-        .btn:hover {
-            background-color: #033524;
-        }
-
-        /* Contact / Footer */
-        footer {
-            text-align: center;
-            padding: 2rem;
-            background-color: var(--uh-green);
-            color: white;
-            font-family: 'Lato', sans-serif;
-            border-top: 50px solid transparent;
-            border-image: url('tais.jpeg') 100 round;
-        }
-
-        .contact-links {
-            margin-top: 1rem;
-        }
-
-        .contact-links a {
-            color: white;
-            margin: 0 15px;
-            font-size: 1.5rem;
-        }
-
-        .contact-links a:hover {
-            color: var(--uh-silver);
-        }
-
-        /* Responsive */
-        @media (max-width: 600px) {
-            .hero h1 { font-size: 2rem; }
-            nav { flex-direction: column; }
-            .nav-links { margin-top: 10px; }
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Timor-Leste Language Resources — Andrew Kline</title>
+<meta name="description" content="A curated bibliography of the Austronesian and non-Austronesian (Timor-Alor-Pantar) languages of Timor-Leste, sorted by language family.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="icon" href="../assets/img/favicon-32.png" sizes="32x32">
+<link rel="icon" href="../assets/img/favicon-16.png" sizes="16x16">
+<link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png">
 </head>
-<body>
+<body data-lang="en">
 
-    <nav>
-        <div class="nav-brand">
-        <a href="/" style="color: inherit; text-decoration: none;">Andrew Kline</a>
-        </div>
-        <div class="nav-links">
-            <a href="/">Home</a>
-            <a href="/publications/">Publications</a>
-            <a href="../andrew_kline_cv.pdf">CV</a>
-        </div>
+<header class="site-header">
+  <div class="container">
+    <a class="site-title" href="../">Andrew Kline</a>
+    <nav class="site-nav" aria-label="Primary">
+      <a href="../">
+        <span lang="en">About</span><span lang="tet">Kona-ba Ha'u</span>
+      </a>
+      <a href="../research/">
+        <span lang="en">Research</span><span lang="tet">Peskiza</span>
+      </a>
+      <a href="../publications/">
+        <span lang="en">Publications</span><span lang="tet">Publikasaun</span>
+      </a>
+      <a href="../teaching/">
+        <span lang="en">Teaching</span><span lang="tet">Hanorin</span>
+      </a>
+      <a href="../fieldwork/">
+        <span lang="en">Fieldwork</span><span lang="tet">Peskiza iha terenu</span>
+      </a>
+      <a href="../resources/" aria-current="page">
+        <span lang="en">Resources</span><span lang="tet">Rekursu</span>
+      </a>
+      <a href="../assets/pdf/andrew_kline_cv.pdf">
+        <span lang="en">CV</span><span lang="tet">CV</span>
+      </a>
+      <div class="nav-right">
+        <button id="lang-toggle" data-current="en" aria-label="Switch to Tetun">
+          <span class="lang-option lang-option-en">EN</span> / <span class="lang-option lang-option-tet">TET</span>
+        </button>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+    <h1>
+      <span lang="en">Timor-Leste Language Resources</span><span lang="tet">[Tradusaun Tetun sei mai / Tetun translation pending]</span>
+    </h1>
+    <p class="page-lede">
+      <span lang="en">A curated bibliography of the Austronesian and non-Austronesian (Timor-Alor-Pantar) languages of Timor-Leste, sorted by language family. Are you a researcher with a resource to add? Email me at <a href="mailto:klineal@hawaii.edu">klineal@hawaii.edu</a>.</span>
+      <span lang="tet">[Tradusaun Tetun sei mai / Tetun translation pending]</span>
+    </p>
+
+    <nav class="toc" aria-label="Languages">
+      <div class="toc-group">
+        <span lang="en">Austronesian &ndash; Central Timor</span><span lang="tet">Austronésia &ndash; Timor Klaran</span>
+      </div>
+      <ul class="toc-list">
+        <li><a href="#mambai">Mambai</a></li>
+        <li><a href="#kemak">Kemak</a></li>
+        <li><a href="#tokodede">Tokodede</a></li>
+        <li><a href="#welaun">Welaun</a></li>
+      </ul>
+      <div class="toc-group">
+        <span lang="en">Austronesian &ndash; Timor-Babar</span><span lang="tet">Austronésia &ndash; Timor-Babar</span>
+      </div>
+      <ul class="toc-list">
+        <li><a href="#waimaa">Waima&rsquo;a</a></li>
+        <li><a href="#naueti">Naueti</a></li>
+        <li><a href="#kairui-midiki">Kairui-Midiki</a></li>
+        <li><a href="#tetun-dili">Tetun Dili</a></li>
+        <li><a href="#tetun-terik">Tetun Terik</a></li>
+        <li><a href="#habun">Habun</a></li>
+        <li><a href="#idate">Idat&eacute;</a></li>
+        <li><a href="#lakalei">Lakalei</a></li>
+        <li><a href="#galolen">Galolen</a></li>
+        <li><a href="#dadua">Dadu&rsquo;a</a></li>
+        <li><a href="#atauran">Atauran</a></li>
+        <li><a href="#makuva">Makuva</a></li>
+      </ul>
+      <div class="toc-group">
+        <span lang="en">Non-Austronesian (Papuan)</span><span lang="tet">La&rsquo;ós Austronésia (Papua)</span>
+      </div>
+      <ul class="toc-list">
+        <li><a href="#bunaq">Bunaq</a></li>
+        <li><a href="#makasae">Makasae</a></li>
+        <li><a href="#makalero">Makalero</a></li>
+        <li><a href="#fataluku">Fataluku</a></li>
+      </ul>
     </nav>
 
+    <section>
+      <h2>
+        <span lang="en">Austronesian Languages</span><span lang="tet">Lian Austronésia</span>
+      </h2>
 
-    
-<div class="wiki-container">
-        
-        <aside class="sidebar">
-            <h4>Browse by Family</h4>
+      <div class="pub-category">Central Timor</div>
 
-            <h5> Austronesian</h5>
-            <h6>Central Timor</h6>
-            <ul>
-                <li><a href="#mambai">Mambai</a></li>
-                <li><a href="#kemak">Kemak</a></li>
-                <li><a href="#tokodede">Tokodede</a></li>
-                <li><a href="#welaun">Welaun</a></li>
-            </ul>
-            <h6>Timor-Babar</h6>
-            <ul>
-                <li><a href="#waima'a">Waima'a</a></li>
-                <li><a href="#naueti">Naueti</a></li>
-                <li><a href="#kairui-midiki">Kairui-Midiki</a></li>
-                <li><a href="#tetun-dili">Tetun Dili</a></li>
-                <li><a href="#tetun-terik">Tetun Terik</a></li>
-                <li><a href="#habun">Habun</a></li>
-                <li><a href="#idate">Idaté</a></li>
-                <li><a href="#lakalei">Lakalei</a></li>
-                <li><a href="#galolen">Galolen</a></li>
-                <li><a href="#dadu'a">Dadu'a</a></li>
-                <li><a href="#atauran">Atauran</a></li>
-                <li><a href="#makuva">Makuva</a></li>
-            </ul>
-            <h5> non-Austronesian (Papuan) </h5>
-            <ul>
-                <li><a href="#bunaq">Bunaq</a></li>
-                <li><a href="#makasae">Makasae</a></li>
-                <li><a href="#makalero">Makalero</a></li>
-                <li><a href="#fataluku">Fataluku</a></li>
-
-        </aside>
-        
-       <main class="content">
-        <h1>Timor-Leste Language Resources</h1>
-        <p>A curated bibliography of the Austronesian and non-Austronesian (Timor-Alor-Pantar) languages of Timor-Leste sorted by language family.<br>Are you a researcher with a resource to add? Email me at <a href="mailto:klineal@hawaii.edu">klineal@hawaii.edu</a>
- </p>
-        <hr>
-
-        <h2 style="color: #0077b6; margin-top: 2rem;">Austronesian Languages</h2>
-        
-        </section>
-        <section id="tetun-dili">
-            <h3>Tetun Dili <span class="family-badge austronesian">AN</span></h3>
-            <div class="citation">
-                <span class="citation-title">The Languages of East Timor</span>
-                <span class="citation-meta">Williams-van Klinken, Catharina, John Hajek, & Rachel Nordlinger (2002)</span>
-                <span class="citation-note">
-                    <span class="tag">Book</span>
-                    <p>Williams-van Klinken, Catharina, John Hajek & Rachel Nordlinger. 2002. Tetun Dili, A Grammar of an East Timorese Language. Pacific Linguistics. </p>
-
-                </div>
-            <div class="citation">
-                <span class="citation-title">Attidues Toward Tetun Dili, A Language of East Timor</span>
-                <span class="citation-meta">Ross, Melody (2002)</span>
-                <span class="citation-note">
-                    <span class="tag">Dissertation</span>
-                    <p>Ross, Melody. 2017. Attitudes Toward Tetun Dili, A Language of East Timor. Honolulu, Hawai’i: University of Hawai’i at Mānoa. https://www.academia.edu/35933283/Attitudes_Toward_Tetun_Dili_A_Language_of_East_Timor.</p>
-
-                </div>
-            <div class="citation">
-                <span class="citation-title">Tetun Dili and Creoles: Another Look</span>
-                <span class="citation-meta">Chen, Yen-ling (2015)</span>
-                <span class="citation-note">
-                    <span class="tag">Journal Article</span>
-                    <p>Chen, Yen-ling. 2015. Tetun Dili and Creoles: Another Look. University of Hawai’i at Mānoa Department of Linguistics. http://hdl.handle.net/10125/73258. (10 August, 2023).</p>
-
-                </div>
-             <div class="citation">
-                <span class="citation-title">Tetun in Timor-Leste: the role of language contact in its development</span>
-                <span class="citation-meta">Greksakova, Zuzana (2018)</span>
-                <span class="citation-note">
-                    <span class="tag">Dissertation</span>
-                    <p>Greksakova, Zuzana. 2018. Tetun in Timor-Leste: the role of language contact in its development. 00500::Universidade de Coimbra doctoralThesis. https://estudogeral.uc.pt/handle/10316/80665. (8 January, 2025).</p>
-
-                </div>
-            
-            <div class="citation">
-                <span class="citation-title">Tetun in Timor-Leste: the role of language contact in its development</span>
-                <span class="citation-meta">Hajek, John & Catharina Williams-van Klinken (2019)</span>
-                <span class="citation-note">
-                    <span class="tag">Journal Article</span>
-                    <p>Hajek, John & Catharina Williams-van Klinken. 2019. Language Contact and Gender in Tetun Dili: What Happens When Austronesian Meets Romance? Oceanic Linguistics. University of Hawai’i Press 58(1). 59–91.</p>
-
-                </div>
-            <div class="citation">
-                <span class="citation-title">Tetun in Timor-Leste: the role of language contact in its development</span>
-                <span class="citation-meta">Hajek, John & Catharina Williams-van Klinken (2019)</span>
-                <span class="citation-note">
-                    <span class="tag">Conference Paper</span>
-                    <p>Klinken, Catharina Williams-van. 2010. Two Tetuns: Language change before your very eyes. From the <i>6th International East Nusantara Conference on Language & Culture</i> in Kupang.</p>
-
-                </div>
-
-
-        </section>
-        <section id="tetun-terik">
-            <h3>Tetun Terik <span class="family-badge austronesian">AN</span></h3>
-            <div class="citation">
-                <span class="citation-title">The Languages of East Timor</span>
-                <span class="citation-meta">Hull, Geoffrey (2002)</span>
-                </div>
-        </section>
-        <section id="mambai">
-            <h3>Mambai <span class="family-badge austronesian">AN</span></h3>
-            <div class="citation">
-                <span class="citation-title">The Languages of East Timor</span>
-                <span class="citation-meta">Hull, Geoffrey (2002)</span>
-                </div>
-        </section>
-        <section id="kemak">
-            <h3>Kemak <span class="family-badge austronesian">AN</span></h3>
-            <div class="citation">
-                <span class="citation-title">The Languages of East Timor</span>
-                <span class="citation-meta">Hull, Geoffrey (2002)</span>
-                </div>
-        </section>
-        <section id="tokodede">
-            <h3>Tokodede <span class="family-badge austronesian">AN</span></h3>
-            <div class="citation">
-                <span class="citation-title">The Languages of East Timor</span>
-                <span class="citation-meta">Hull, Geoffrey (2002)</span>
-                </div>
-        </section>
-        <section id="welaun">
-            <h3>Welaun <span class="family-badge austronesian">AN</span></h3>
-            <div class="citation">
-                <span class="citation-title">The Languages of East Timor</span>
-                <span class="citation-meta">Hull, Geoffrey (2002)</span>
-                </div>
-        </section>
-
-        <section id="waima'a">
-            <h3>Waima'a <span class="family-badge austronesian">AN</span></h3>
-            <div class="citation">
-                <span class="citation-title">The Languages of East Timor</span>
-                <span class="citation-meta">Hull, Geoffrey (2002)</span>
-                </div>
-        </section>
-        <section id="naueti">
-            <h3>Naueti <span class="family-badge austronesian">AN</span></h3>
-            <div class="citation">
-                <span class="citation-title">The Languages of East Timor</span>
-                <span class="citation-meta">Hull, Geoffrey (2002)</span>
-                </div>
-        </section>
-        <section id="kairui-midiki">
-            <h3>Kairui-Midiki <span class="family-badge austronesian">AN</span></h3>
-            <div class="citation">
-                <span class="citation-title">The Languages of East Timor</span>
-                <span class="citation-meta">Hull, Geoffrey (2002)</span>
-                </div>
-        <section id="habun">
-            <h3>Habun <span class="family-badge austronesian">AN</span></h3>
-            <div class="citation">
-                <span class="citation-title">The Languages of East Timor</span>
-                <span class="citation-meta">Hull, Geoffrey (2002)</span>
-                </div>
-        <section id="idate">
-            <h3>Idaté <span class="family-badge austronesian">AN</span></h3>
-            <div class="citation">
-                <span class="citation-title">The Languages of East Timor</span>
-                <span class="citation-meta">Hull, Geoffrey (2002)</span>
-                </div>
-        <section id="lakalei">
-            <h3>Lakalei <span class="family-badge austronesian">AN</span></h3>
-            <div class="citation">
-                <span class="citation-title">The Languages of East Timor</span>
-                <span class="citation-meta">Hull, Geoffrey (2002)</span>
-                </div>
-        <section id="galolen">
-            <h3>Galolen <span class="family-badge austronesian">AN</span></h3>
-            <div class="citation">
-                <span class="citation-title">The Languages of East Timor</span>
-                <span class="citation-meta">Hull, Geoffrey (2002)</span>
-                </div>
-        <section id="dadu'a">
-            <h3>Dadu'a <span class="family-badge austronesian">AN</span></h3>
-            <div class="citation">
-                <span class="citation-title">The Languages of East Timor</span>
-                <span class="citation-meta">Hull, Geoffrey (2002)</span>
-                </div>
-        <section id="atauran">
-            <h3>Atauran <span class="family-badge austronesian">AN</span></h3>
-            <div class="citation">
-                <span class="citation-title">The Languages of East Timor</span>
-                <span class="citation-meta">Hull, Geoffrey (2002)</span>
-                </div>
-        <section id="makuva">
-            <h3>Makuva <span class="family-badge austronesian">AN</span></h3>
-            <div class="citation">
-                <span class="citation-title">The Languages of East Timor</span>
-                <span class="citation-meta">Hull, Geoffrey (2002)</span>
-                </div>
-
-        <h2 style="color: #e07a5f; margin-top: 3rem; border-top: 1px solid #eee; padding-top: 2rem;">non-Austronesian (Timor-Alor-Pantar)</h2>
-        
-        <section id="makasae">
-            <h3>Makasae <span class="family-badge nonAN">TAP</span></h3>
-            <div class="citation">
-                <span class="citation-title">First steps towards a grammar of Makasae: a language of East Timor</span>
-                <span class="citation-meta">Huber, Juliette (2008)</span>
-                <p class="citation-note">
-                    <span class="tag">MA Dissertation</span>
-                    <p>Sketch grammar of Makasae based on the variety spoken in the subdistrict of Ossu, Viqueque district (southern Makasae).</p>
-            </div>
-            <div class="citation">
-                <span class="citation-title">Describing Makasae : a trans-New Guinea language of East Timor</span>
-                <span class="citation-meta">Correia, Aderito (2011)</span>
-                <p class="citation-note">
-                    <span class="tag">Dissertation</span>
-                   <p> Grammar of Makasae writen by Timorese linguist Aderito Correia as his dissertation at Western Sydney University, based on the author's native variety of Makasae spoken in the subdistrict of Laga, Baucau district. <strong>Includes a Makasae-English, English-Makasae word list.</strong></p>
-                </p>
-            </div>
-            <div class="citation">
-                <span class="citation-title">Makalero and Makasae</span>
-                <span class="citation-meta">Huber, Juliette (2017)</span>
-                <p class="citation-note">
-                    <span class="tag">Book chapter</span>
-                    <p>Description and comparison of Makalero and Makasae. The fifth chapter of the second volume of <i>The Papuan Languages of Timor, Alor and Pantar</i>, edited by Antoinette Schapper (pg. 267-351).</p>
-                </p>
-            </div>
-            <div class="citation">
-                <span class="citation-title">A Spatial Odyssey: Referring to Space in Makasai</span>
-                <span class="citation-meta">Brotherson, Anna (2003)</span>
-                <p class="citation-note">
-                    <span class="tag">Honours thesis</span>
-                    <p>Honours thesis from Australian National University describing the spatial reference system of Makasae. <strong>Difficult to find digitally.</strong></p>
-                </p>
-            </div>
-            <div class="citation">
-                <span class="citation-title">Aspectos gramaticais da língua makasae de timor-leste : fonologia, morfologia e sintaxe</span>
-                <span class="citation-meta">Fogaça, Jessé Silveira (2016)</span>
-                <p class="citation-note">
-                    <span class="tag">Dissertation</span>
-                    <p>Dissertation from Universidade de Brasília featuring a description of Makasae phonology, morphology, and syntax in Portuguese.</p>
-                </p>
-            </div>
-        </section>
-
-    <section id="makalero">
-            <h3>Makalero <span class="family-badge nonAN">TAP</span></h3>
-            <div class="citation">
-                <span class="citation-title">A grammar of Makalero: a Papuan language of East Timor</span>
-                <span class="citation-meta">Huber, Juliette (2011)</span>
-                <p class="citation-note">
-                    <span class="tag">Dissertation</span>
-                    <p>Descriptive grammar of Makalero as spoken in the subdistrict of Iliomar, Lautém district. Written by Juliette Huber as her dissertation at Universiteit Leiden in the Netherlands. <strong> Includes a lengthy Makalero-English, English-Makalero word list.</strong></p>
-                </p>
-            </div>
-            <div class="citation">
-                <span class="citation-title">Makalero and Makasae</span>
-                <span class="citation-meta">Huber, Juliette (2017)</span>
-                <p class="citation-note">
-                    <span class="tag">Book chapter</span>
-                    <p>Description and comparison of Makalero and Makasae. The fifth chapter of the second volume of <i>The Papuan Languages of Timor, Alor and Pantar</i>, edited by Antoinette Schapper (pg. 267-351).</p>
-                </p>
-            </div>
-                        <div class="citation">
-                <span class="citation-title">Vocabulariu: Makalero-Tetun-Portugues-Ingles</span>
-                <span class="citation-meta">Pinto, Thomas Mariano (2012)</span>
-                <p class="citation-note">
-                    <span class="tag">Dictionary</span>
-                   <p>Four language Makalero dictionary produced by the Timor Lorosa'e-Nippon Culture Center. <strong>Difficult to find digitally.</strong> </p>
-                </p>
-            </div>
-        </section>
-        <section id="fataluku">
-            <h3>Fataluku <span class="family-badge nonAN">TAP</span></h3>
-            <div class="citation">
-                <span class="citation-title">The Languages of East Timor</span>
-                <span class="citation-meta">Hull, Geoffrey (2002)</span>
-                </div>
-        </section>
-        <section id="bunaq">
-            <h3>Bunaq <span class="family-badge nonAN">TAP</span></h3>
-            <div class="citation">
-                <span class="citation-title">The Languages of East Timor</span>
-                <span class="citation-meta">Hull, Geoffrey (2002)</span>
-                </div>
-        </section>
-
-    </main>
-</div>
-    </div>
-
-    <footer>
-        <p>Andrew Kline &copy; 2026</p>
-        <div class="contact-links">
-            <a href="mailto:klineal@hawaii.edu" title="Email Me"><i class="fas fa-envelope"></i></a>
-            
-            <a href="https://orcid.org/0009-0003-2895-2126" target="_blank" title="ORCID">
-                <i class="fab fa-orcid"></i>
-            </a>
-            
-            <a href="https://scholar.google.com/citations?user=u6OPEDUAAAAJ&hl=en" target="_blank" title="Google Scholar">
-                <i class="fas fa-graduation-cap"></i>
-            </a>
+      <section id="mambai">
+        <h3 class="lang-heading">Mambai <span class="lang-badge lang-badge-an">AN</span></h3>
+        <div class="pub-entry">
+          <p class="pub-citation">Hull, Geoffrey (2002). <em>The Languages of East Timor.</em></p>
         </div>
-    </footer>
+      </section>
 
+      <section id="kemak">
+        <h3 class="lang-heading">Kemak <span class="lang-badge lang-badge-an">AN</span></h3>
+        <div class="pub-entry">
+          <p class="pub-citation">Hull, Geoffrey (2002). <em>The Languages of East Timor.</em></p>
+        </div>
+      </section>
+
+      <section id="tokodede">
+        <h3 class="lang-heading">Tokodede <span class="lang-badge lang-badge-an">AN</span></h3>
+        <div class="pub-entry">
+          <p class="pub-citation">Hull, Geoffrey (2002). <em>The Languages of East Timor.</em></p>
+        </div>
+      </section>
+
+      <section id="welaun">
+        <h3 class="lang-heading">Welaun <span class="lang-badge lang-badge-an">AN</span></h3>
+        <div class="pub-entry">
+          <p class="pub-citation">Hull, Geoffrey (2002). <em>The Languages of East Timor.</em></p>
+        </div>
+      </section>
+
+      <div class="pub-category">Timor-Babar</div>
+
+      <section id="waimaa">
+        <h3 class="lang-heading">Waima&rsquo;a <span class="lang-badge lang-badge-an">AN</span></h3>
+        <div class="pub-entry">
+          <p class="pub-citation">Hull, Geoffrey (2002). <em>The Languages of East Timor.</em></p>
+        </div>
+      </section>
+
+      <section id="naueti">
+        <h3 class="lang-heading">Naueti <span class="lang-badge lang-badge-an">AN</span></h3>
+        <div class="pub-entry">
+          <p class="pub-citation">Hull, Geoffrey (2002). <em>The Languages of East Timor.</em></p>
+        </div>
+      </section>
+
+      <section id="kairui-midiki">
+        <h3 class="lang-heading">Kairui-Midiki <span class="lang-badge lang-badge-an">AN</span></h3>
+        <div class="pub-entry">
+          <p class="pub-citation">Hull, Geoffrey (2002). <em>The Languages of East Timor.</em></p>
+        </div>
+      </section>
+
+      <section id="tetun-dili">
+        <h3 class="lang-heading">Tetun Dili <span class="lang-badge lang-badge-an">AN</span></h3>
+        <div class="pub-entry">
+          <span class="citation-tag">Book</span>
+          <p class="pub-citation">Williams-van Klinken, Catharina, John Hajek &amp; Rachel Nordlinger (2002). <em>Tetun Dili, A Grammar of an East Timorese Language.</em> Pacific Linguistics.</p>
+        </div>
+        <div class="pub-entry">
+          <span class="citation-tag">Dissertation</span>
+          <p class="pub-citation">Ross, Melody (2017). <em>Attitudes Toward Tetun Dili, A Language of East Timor.</em> Honolulu, Hawai&rsquo;i: University of Hawai&rsquo;i at M&#257;noa. <a href="https://www.academia.edu/35933283/Attitudes_Toward_Tetun_Dili_A_Language_of_East_Timor" target="_blank" rel="noopener">academia.edu/35933283</a></p>
+        </div>
+        <div class="pub-entry">
+          <span class="citation-tag">Journal Article</span>
+          <p class="pub-citation">Chen, Yen-ling (2015). &ldquo;Tetun Dili and Creoles: Another Look.&rdquo; University of Hawai&rsquo;i at M&#257;noa Department of Linguistics. <a href="http://hdl.handle.net/10125/73258" target="_blank" rel="noopener">hdl.handle.net/10125/73258</a></p>
+        </div>
+        <div class="pub-entry">
+          <span class="citation-tag">Dissertation</span>
+          <p class="pub-citation">Greksakova, Zuzana (2018). <em>Tetun in Timor-Leste: The Role of Language Contact in Its Development.</em> Universidade de Coimbra doctoral thesis. <a href="https://estudogeral.uc.pt/handle/10316/80665" target="_blank" rel="noopener">estudogeral.uc.pt/handle/10316/80665</a></p>
+        </div>
+        <div class="pub-entry">
+          <span class="citation-tag">Journal Article</span>
+          <p class="pub-citation">Hajek, John &amp; Catharina Williams-van Klinken (2019). &ldquo;Language Contact and Gender in Tetun Dili: What Happens When Austronesian Meets Romance?&rdquo; <em>Oceanic Linguistics.</em> University of Hawai&rsquo;i Press 58(1). 59&ndash;91.</p>
+        </div>
+        <div class="pub-entry">
+          <span class="citation-tag">Conference Paper</span>
+          <p class="pub-citation">Williams-van Klinken, Catharina (2010). &ldquo;Two Tetuns: Language Change Before Your Very Eyes.&rdquo; <em>6th International East Nusantara Conference on Language &amp; Culture,</em> Kupang.</p>
+        </div>
+      </section>
+
+      <section id="tetun-terik">
+        <h3 class="lang-heading">Tetun Terik <span class="lang-badge lang-badge-an">AN</span></h3>
+        <div class="pub-entry">
+          <p class="pub-citation">Hull, Geoffrey (2002). <em>The Languages of East Timor.</em></p>
+        </div>
+      </section>
+
+      <section id="habun">
+        <h3 class="lang-heading">Habun <span class="lang-badge lang-badge-an">AN</span></h3>
+        <div class="pub-entry">
+          <p class="pub-citation">Hull, Geoffrey (2002). <em>The Languages of East Timor.</em></p>
+        </div>
+      </section>
+
+      <section id="idate">
+        <h3 class="lang-heading">Idat&eacute; <span class="lang-badge lang-badge-an">AN</span></h3>
+        <div class="pub-entry">
+          <p class="pub-citation">Hull, Geoffrey (2002). <em>The Languages of East Timor.</em></p>
+        </div>
+      </section>
+
+      <section id="lakalei">
+        <h3 class="lang-heading">Lakalei <span class="lang-badge lang-badge-an">AN</span></h3>
+        <div class="pub-entry">
+          <p class="pub-citation">Hull, Geoffrey (2002). <em>The Languages of East Timor.</em></p>
+        </div>
+      </section>
+
+      <section id="galolen">
+        <h3 class="lang-heading">Galolen <span class="lang-badge lang-badge-an">AN</span></h3>
+        <div class="pub-entry">
+          <p class="pub-citation">Hull, Geoffrey (2002). <em>The Languages of East Timor.</em></p>
+        </div>
+      </section>
+
+      <section id="dadua">
+        <h3 class="lang-heading">Dadu&rsquo;a <span class="lang-badge lang-badge-an">AN</span></h3>
+        <div class="pub-entry">
+          <p class="pub-citation">Hull, Geoffrey (2002). <em>The Languages of East Timor.</em></p>
+        </div>
+      </section>
+
+      <section id="atauran">
+        <h3 class="lang-heading">Atauran <span class="lang-badge lang-badge-an">AN</span></h3>
+        <div class="pub-entry">
+          <p class="pub-citation">Hull, Geoffrey (2002). <em>The Languages of East Timor.</em></p>
+        </div>
+      </section>
+
+      <section id="makuva">
+        <h3 class="lang-heading">Makuva <span class="lang-badge lang-badge-an">AN</span></h3>
+        <div class="pub-entry">
+          <p class="pub-citation">Hull, Geoffrey (2002). <em>The Languages of East Timor.</em></p>
+        </div>
+      </section>
+    </section>
+
+    <section>
+      <h2>
+        <span lang="en">Non-Austronesian (Timor-Alor-Pantar)</span><span lang="tet">La&rsquo;ós Austronésia (Timor-Alor-Pantar)</span>
+      </h2>
+
+      <section id="bunaq">
+        <h3 class="lang-heading">Bunaq <span class="lang-badge lang-badge-nonan">TAP</span></h3>
+        <div class="pub-entry">
+          <p class="pub-citation">Hull, Geoffrey (2002). <em>The Languages of East Timor.</em></p>
+        </div>
+      </section>
+
+      <section id="makasae">
+        <h3 class="lang-heading">Makasae <span class="lang-badge lang-badge-nonan">TAP</span></h3>
+        <div class="pub-entry">
+          <span class="citation-tag">MA Dissertation</span>
+          <p class="pub-citation">Huber, Juliette (2008). <em>First Steps Towards a Grammar of Makasae: A Language of East Timor.</em> Sketch grammar based on the variety spoken in the subdistrict of Ossu, Viqueque district (southern Makasae).</p>
+        </div>
+        <div class="pub-entry">
+          <span class="citation-tag">Dissertation</span>
+          <p class="pub-citation">Correia, Aderito (2011). <em>Describing Makasae: A Trans-New Guinea Language of East Timor.</em> Western Sydney University. Based on the author&rsquo;s native variety spoken in the subdistrict of Laga, Baucau district. Includes a Makasae&ndash;English, English&ndash;Makasae word list.</p>
+        </div>
+        <div class="pub-entry">
+          <span class="citation-tag">Book Chapter</span>
+          <p class="pub-citation">Huber, Juliette (2017). &ldquo;Makalero and Makasae.&rdquo; In <em>The Papuan Languages of Timor, Alor and Pantar,</em> vol. 2, ed. Antoinette Schapper, 267&ndash;351.</p>
+        </div>
+        <div class="pub-entry">
+          <span class="citation-tag">Honours Thesis</span>
+          <p class="pub-citation">Brotherson, Anna (2003). <em>A Spatial Odyssey: Referring to Space in Makasai.</em> Australian National University. Difficult to find digitally.</p>
+        </div>
+        <div class="pub-entry">
+          <span class="citation-tag">Dissertation</span>
+          <p class="pub-citation">Foga&ccedil;a, Jess&eacute; Silveira (2016). <em>Aspectos Gramaticais da L&iacute;ngua Makasae de Timor-Leste: Fonologia, Morfologia e Sintaxe.</em> Universidade de Bras&iacute;lia. Description of Makasae phonology, morphology, and syntax, in Portuguese.</p>
+        </div>
+      </section>
+
+      <section id="makalero">
+        <h3 class="lang-heading">Makalero <span class="lang-badge lang-badge-nonan">TAP</span></h3>
+        <div class="pub-entry">
+          <span class="citation-tag">Dissertation</span>
+          <p class="pub-citation">Huber, Juliette (2011). <em>A Grammar of Makalero: A Papuan Language of East Timor.</em> Universiteit Leiden. Descriptive grammar as spoken in the subdistrict of Iliomar, Laut&eacute;m district. Includes a lengthy Makalero&ndash;English, English&ndash;Makalero word list.</p>
+        </div>
+        <div class="pub-entry">
+          <span class="citation-tag">Book Chapter</span>
+          <p class="pub-citation">Huber, Juliette (2017). &ldquo;Makalero and Makasae.&rdquo; In <em>The Papuan Languages of Timor, Alor and Pantar,</em> vol. 2, ed. Antoinette Schapper, 267&ndash;351.</p>
+        </div>
+        <div class="pub-entry">
+          <span class="citation-tag">Dictionary</span>
+          <p class="pub-citation">Pinto, Thomas Mariano (2012). <em>Vocabulariu: Makalero&ndash;Tetun&ndash;Portugues&ndash;Ingles.</em> Timor Lorosa&rsquo;e&ndash;Nippon Culture Center. Four-language dictionary. Difficult to find digitally.</p>
+        </div>
+      </section>
+
+      <section id="fataluku">
+        <h3 class="lang-heading">Fataluku <span class="lang-badge lang-badge-nonan">TAP</span></h3>
+        <div class="pub-entry">
+          <p class="pub-citation">Hull, Geoffrey (2002). <em>The Languages of East Timor.</em></p>
+        </div>
+      </section>
+    </section>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div>
+      <span lang="en">&copy; 2026 Andrew Kline</span>
+      <span lang="tet">&copy; 2026 Andrew Kline</span>
+    </div>
+    <div class="footer-links">
+      <a href="mailto:klineal@hawaii.edu">Email</a>
+      <a href="https://orcid.org/0009-0003-2895-2126" target="_blank" rel="noopener">ORCID</a>
+      <a href="https://scholar.google.com/citations?user=u6OPEDUAAAAJ&hl=en" target="_blank" rel="noopener">Google Scholar</a>
+    </div>
+  </div>
+</footer>
+
+<script src="../assets/js/main.js"></script>
 </body>
 </html>

@@ -1,0 +1,8 @@
+# Raw photo/screenshot uploads dropped in the repo root for processing.
+# Processed, compressed copies live under assets/img/ and are tracked.
+# Anchored to root (leading /) so assets/img/**/*.jpg is unaffected --
+# git on macOS is case-insensitive by default, so *.JPG would otherwise
+# also match tracked lowercase .jpg files under assets/.
+/*.JPG
+/*.jpeg
+/Screenshot *.png
