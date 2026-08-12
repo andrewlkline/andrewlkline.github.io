@@ -325,6 +325,7 @@
     'Makalero','Makasai','Makuva','Mambai','Midiki','Nanaek','Naueti','Rahesuk',
     'Raklungu','Resuk','Sa’ani','Waima’a','Tetun Terik','Tokodede'];
   var EXTRA_COLS = ['Tetun Prasa', 'Seluk-seluk'];
+  var EXCLUDED_FROM_DROPDOWN = ['Adabe', 'Atauran', 'Idalaka', 'Kawaimina', 'Lolein', 'Nanaek'];
 
   var VERNACULAR_COLORS = {
     'Baikenu':'#1f77b4','Bekais':'#aec7e8','Bunak':'#ff7f0e','Dadu’a':'#ffbb78',
@@ -529,12 +530,13 @@
     var kwGroup = document.createElement('optgroup');
     kwGroup.label = 'Kawaimina family';
     addOption(kwGroup, 'KairuiMidiki', 'Kairui + Midiki (combined)');
-    ['Kairui', 'Midiki', 'Kawaimina', 'Naueti', 'Waima’a'].forEach(function (l) { addOption(kwGroup, l, l); });
+    ['Kairui', 'Midiki', 'Naueti', 'Waima’a'].forEach(function (l) { addOption(kwGroup, l, l); });
     select.appendChild(kwGroup);
 
     var allGroup = document.createElement('optgroup');
     allGroup.label = 'All languages (A–Z)';
-    LANG_COLS.concat(EXTRA_COLS).slice().sort().forEach(function (l) { addOption(allGroup, l, l); });
+    LANG_COLS.concat(EXTRA_COLS).filter(function (l) { return EXCLUDED_FROM_DROPDOWN.indexOf(l) === -1; })
+      .slice().sort().forEach(function (l) { addOption(allGroup, l, l); });
     select.appendChild(allGroup);
   })();
   select.addEventListener('change', function () { mode = select.value; restyleAll(); });
