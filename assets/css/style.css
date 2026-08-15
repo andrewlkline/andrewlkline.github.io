@@ -534,10 +534,20 @@ table.simple-table th {
   letter-spacing: 0.04em;
 }
 
+/* -------------------- Tais divider -------------------- */
+
+.tais-divider {
+  height: 12px;
+  background-image: url("../img/tais-border.jpg");
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+
 /* -------------------- Footer -------------------- */
 
 .site-footer {
-  border-top: 1px solid var(--color-border);
   padding: 2rem 0;
   color: var(--color-text-muted);
   font-size: 0.9rem;
