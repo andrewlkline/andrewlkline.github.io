@@ -29,10 +29,10 @@
   {
     "suco": "Uai-Mori",
     "admin_post": "Viqueque, Viqueque",
-    "lat": -8.848819,
-    "lng": 126.325055,
-    "type": "unresolved",
-    "title": "Uai-Mori — unresolved boundary conflict",
-    "body": "Fieldwork (a site visit and conversation with the Xefe Suco) suggests the current suco may occupy only a small northern area (4 aldeias: Uma Liurai, Uma Bo'o, Uaibubo, Lulei), while the shapefile's polygon — and an official Direcção Nacional de Estatística Suco Report — describes a much larger area consistent with a different, southern location. This is a genuine unresolved conflict, not a data-pipeline bug, and has not been \"fixed\" without further fieldwork confirmation of whether Aldeia Uatuleso and Aldeia Mea-Uai (the disputed southern aldeias) are still officially registered under Suco Uai-Mori."
+    "lat": -8.7309,
+    "lng": 126.2441,
+    "type": "geometry-correction",
+    "title": "Uai-Mori — geometry corrected (2026-08)",
+    "body": "Resolved by a site visit (the author physically traveled through neighboring sucos Fatulia and Liaruca to reach it): the shapefile had filed the real, small, northern Uai-Mori as an unlabeled disconnected piece of neighboring Bibileo's polygon, while a separate, larger central-Viqueque polygon was mislabeled \"Uai Mori.\" Both sucos matched their shapefile entries by exact name, so this was an error in the source geometry, not the matching pipeline. Fix: Uai-Mori's geometry is now Bibileo's former disconnected northern piece; Bibileo's geometry is reduced to its remaining southern piece. Census attributes are unchanged for both sucos — only which polygon each is drawn with changed."
   }
 ]
