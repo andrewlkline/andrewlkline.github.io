@@ -195,6 +195,38 @@
   table.census-table tbody tr:hover { background: var(--color-bg-alt); cursor: pointer; }
   table.census-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
 
+  .breakdown-panel {
+    border: 1px solid var(--color-border);
+    background: var(--color-bg-alt);
+    border-radius: var(--radius);
+    padding: 0.9rem 1.1rem;
+    margin-bottom: 0.9rem;
+  }
+  .breakdown-title {
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: var(--color-heading);
+    margin-bottom: 0.5rem;
+  }
+  .breakdown-list {
+    columns: 3 220px;
+    column-gap: 1.4rem;
+    font-size: 0.85rem;
+  }
+  .breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.8rem;
+    padding: 0.15rem 0;
+    break-inside: avoid;
+  }
+  .breakdown-row .lang { white-space: nowrap; }
+  .breakdown-row .pct {
+    color: var(--color-text-muted);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
   .loading-note {
     color: var(--color-text-muted);
     font-style: italic;
@@ -275,13 +307,16 @@
     </div>
     <p style="font-size:0.8rem; color:var(--color-text-muted); margin-top:0;">
       Markers in the homeland area mark known corrections from suco-office fieldwork records &mdash;
-      click a marker for details. Click any suco (on the map or in the table below) to zoom to it.
+      click a marker for details. Hatched areas are exclaves where suco-level census data is known
+      to misrepresent the local language (confirmed Makasae-speaking, not Midiki) &mdash; click a
+      hatched area for details. Click any suco (on the map or in the table below) to zoom to it.
     </p>
 
     <div class="table-controls">
       <input type="text" id="table-search" class="table-search" placeholder="Search municipality, admin post, or suco&hellip;">
       <span class="table-count" id="table-count"></span>
     </div>
+    <div class="breakdown-panel" id="lang-breakdown-panel" hidden></div>
     <div class="census-table-wrap">
       <table class="census-table" id="census-table">
         <thead>
@@ -343,6 +378,22 @@
 
   var LANG_LABELS = { 'KairuiMidiki': 'Kairui + Midiki (combined)' };
   function labelFor(code) { return LANG_LABELS[code] || code; }
+
+  var BREAKDOWN_COLS = LANG_COLS.concat(EXTRA_COLS);
+
+  var EXCLAVE_SUCOS = ['Uatu Haco', 'Bado-Ho\'o'];
+
+  (function injectHatchPattern() {
+    var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('width', '0');
+    svg.setAttribute('height', '0');
+    svg.style.position = 'absolute';
+    svg.innerHTML = '<defs><pattern id="exclave-hatch" patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(45)">' +
+      '<rect width="8" height="8" fill="rgba(253,210,0,0.18)"></rect>' +
+      '<line x1="0" y1="0" x2="0" y2="8" stroke="#a23503" stroke-width="3"></line>' +
+      '</pattern></defs>';
+    document.body.appendChild(svg);
+  })();
 
   var map = L.map('census-map', { scrollWheelZoom: true }).setView([-8.85, 125.9], 9);
   L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
@@ -475,8 +526,69 @@
     return rows;
   }
 
+  // ---- Full-language breakdown panel ----
+  // Search results narrow to a suco, admin post, or municipality; the table
+  // row only ever shows one "selected" language, so this panel shows every
+  // vernacular present (nonzero speakers) for whatever the search matched.
+  function computeBreakdownTarget(q) {
+    if (!q) return null;
+    var qLower = q.toLowerCase();
+    var muniMatch = null, postMatch = null;
+    features.forEach(function (f) {
+      var p = f.properties;
+      if (!muniMatch && p.municipality && p.municipality.toLowerCase() === qLower) muniMatch = p.municipality;
+      if (!postMatch && p.admin_post && p.admin_post.toLowerCase() === qLower) postMatch = p.admin_post;
+    });
+    if (muniMatch) return { label: muniMatch, match: function (p) { return p.municipality === muniMatch; } };
+    if (postMatch) return { label: postMatch, match: function (p) { return p.admin_post === postMatch; } };
+    var sucoMatches = features.filter(function (f) { return f.properties.census_suco.toLowerCase() === qLower; });
+    if (sucoMatches.length === 1) {
+      var s = sucoMatches[0].properties;
+      return { label: s.census_suco + ' (' + s.admin_post + ', ' + s.municipality + ')', match: function (p) { return p.census_suco === s.census_suco; } };
+    }
+    return null;
+  }
+
+  function renderBreakdownPanel(filteredRows) {
+    var panel = document.getElementById('lang-breakdown-panel');
+    var q = document.getElementById('table-search').value.trim();
+    var target = computeBreakdownTarget(q);
+    if (!target && filteredRows.length === 1) {
+      var r = filteredRows[0];
+      target = { label: r.census_suco + ' (' + r.admin_post + ', ' + r.municipality + ')', match: function (p) { return p.census_suco === r.census_suco; } };
+    }
+    if (!target || !features.length) { panel.hidden = true; panel.innerHTML = ''; return; }
+
+    var matched = features.filter(function (f) { return target.match(f.properties); });
+    if (!matched.length) { panel.hidden = true; panel.innerHTML = ''; return; }
+
+    var total = 0;
+    var sums = {};
+    BREAKDOWN_COLS.forEach(function (l) { sums[l] = 0; });
+    matched.forEach(function (f) {
+      var p = f.properties;
+      total += (p.total || 0);
+      BREAKDOWN_COLS.forEach(function (l) { sums[l] += (p[l] || 0); });
+    });
+
+    var langRows = BREAKDOWN_COLS.map(function (l) {
+      return { lang: l, n: sums[l], pct: total ? (sums[l] / total * 100) : 0 };
+    }).filter(function (r) { return r.n > 0; }).sort(function (a, b) { return b.pct - a.pct; });
+
+    var rowsHtml = langRows.map(function (r) {
+      return '<div class="breakdown-row"><span class="lang">' + r.lang + '</span><span class="pct">' +
+        Math.round(r.n).toLocaleString() + ' &middot; ' + r.pct.toFixed(1) + '%</span></div>';
+    }).join('');
+
+    panel.hidden = false;
+    panel.innerHTML = '<div class="breakdown-title">All vernaculars &mdash; ' + target.label + ' (' +
+      matched.length + (matched.length === 1 ? ' suco' : ' sucos') + ', pop. ' + total.toLocaleString() + ')</div>' +
+      '<div class="breakdown-list">' + (rowsHtml || '<em>No language data.</em>') + '</div>';
+  }
+
   function renderTable() {
     var rows = rowsForTable();
+    renderBreakdownPanel(rows);
     var tbody = document.getElementById('census-table-body');
     if (!rows.length) {
       tbody.innerHTML = '<tr><td colspan="7" class="loading-note">No sucos match that search.</td></tr>';
@@ -569,8 +681,58 @@
     if (group.length) map.flyToBounds(L.featureGroup(group).getBounds(), { duration: 0.6, padding: [40, 40] });
   });
 
+  // ---- Exclave hatching ----
+  // Uatu Haco and Bado-Ho'o are both 2-piece MultiPolygons where the smaller
+  // piece is a real geographic exclave cut off by neighboring suco Uai-Oli;
+  // fieldwork identified both exclaves as Makasae-speaking, not Midiki as
+  // suco-wide census data would suggest. Hatch the exclave piece to match the
+  // treatment already used in the project's static maps.
+  function ringArea(ring) {
+    var sum = 0;
+    for (var i = 0; i < ring.length - 1; i++) {
+      sum += ring[i][0] * ring[i + 1][1] - ring[i + 1][0] * ring[i][1];
+    }
+    return Math.abs(sum) / 2;
+  }
+  function smallerPolygonPiece(geometry) {
+    if (geometry.type !== 'MultiPolygon') return null;
+    var best = null, bestArea = Infinity;
+    geometry.coordinates.forEach(function (piece) {
+      var a = ringArea(piece[0]);
+      if (a < bestArea) { bestArea = a; best = piece; }
+    });
+    return best;
+  }
+  function renderExclaveHatches(annotationItems) {
+    var bySuco = {};
+    (annotationItems || []).forEach(function (item) { bySuco[item.suco] = item; });
+    EXCLAVE_SUCOS.forEach(function (name) {
+      var feature = features.filter(function (f) { return f.properties.census_suco === name; })[0];
+      if (!feature) return;
+      var piece = smallerPolygonPiece(feature.geometry);
+      if (!piece) return;
+      var layer = L.geoJSON(
+        { type: 'Feature', properties: {}, geometry: { type: 'Polygon', coordinates: piece } },
+        { style: { fillColor: 'url(#exclave-hatch)', fillOpacity: 1, color: '#a23503', weight: 2 } }
+      ).addTo(map);
+      var item = bySuco[name];
+      if (item) {
+        layer.bindPopup(
+          '<div class="annotation-popup"><div class="popup-title">' + item.title + '</div>' +
+          '<div class="popup-meta">' + item.suco + ', ' + item.admin_post + '</div>' +
+          '<div class="popup-body">' + item.body + '</div></div>',
+          { maxWidth: 320 }
+        );
+      }
+    });
+  }
+
   // ---- Load data ----
-  fetch('../assets/data/suco_census_2022.geojson').then(function (r) { return r.json(); }).then(function (gj) {
+  Promise.all([
+    fetch('../assets/data/suco_census_2022.geojson').then(function (r) { return r.json(); }),
+    fetch('../assets/data/kawaimina_annotations.json').then(function (r) { return r.json(); })
+  ]).then(function (results) {
+    var gj = results[0], annotationItems = results[1];
     features = gj.features;
     geoLayer = L.geoJSON(gj, {
       style: styleFeature,
@@ -581,13 +743,8 @@
         layer.on('mouseout', function () { layer.setStyle({ weight: 0.6, color: '#fff' }); });
       }
     }).addTo(map);
-    restyleAll();
-  }).catch(function (err) {
-    document.getElementById('census-table-body').innerHTML = '<tr><td colspan="7" class="loading-note">Could not load census data: ' + err + '</td></tr>';
-  });
 
-  fetch('../assets/data/kawaimina_annotations.json').then(function (r) { return r.json(); }).then(function (items) {
-    items.forEach(function (item) {
+    annotationItems.forEach(function (item) {
       var marker = L.circleMarker([item.lat, item.lng], {
         radius: 8, color: '#4e2a1a', weight: 2, fillColor: '#fdd200', fillOpacity: 0.9
       }).addTo(map);
@@ -598,6 +755,11 @@
         { maxWidth: 320 }
       );
     });
+
+    renderExclaveHatches(annotationItems);
+    restyleAll();
+  }).catch(function (err) {
+    document.getElementById('census-table-body').innerHTML = '<tr><td colspan="7" class="loading-note">Could not load census data: ' + err + '</td></tr>';
   });
 })();
 </script>
