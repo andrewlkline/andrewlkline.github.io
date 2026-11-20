@@ -43,7 +43,6 @@ assets/data/                Data for census-maps/ (see below)
 assets/img/profile.jpg
 assets/img/tais-border.jpg  Tais-pattern photo frame background
 assets/img/krd-villages.png Hand-drawn Kairui-Midiki villages map
-assets/img/favicon-*.png    "AK" monogram favicon (16/32/180/512px)
 assets/pdf/andrew_kline_cv.pdf
 ```
 
