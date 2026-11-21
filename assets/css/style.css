@@ -26,7 +26,7 @@
 
 /* Alternate warm/earthy palette — preview by setting <html data-theme="earthy"> */
 [data-theme="earthy"] {
-  --color-bg: #fbf6ee;
+  --color-bg: #ffffff;
   --color-bg-alt: #f3e9d8;
   --color-text: #3a2e26;
   --color-text-muted: #7a6a5a;
