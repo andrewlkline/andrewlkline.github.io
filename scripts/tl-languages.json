@@ -1,0 +1,36 @@
+{
+  "_comment": "Maps Zotero collection names (under the top-level 'Languages' collection) to display metadata. Matching is case-insensitive against 'name' and every entry in 'aliases'. Order here is the order sections appear on the page. Codes checked against Glottolog 2026-11-26. family: 'an' = Austronesian, 'tap' = Timor-Alor-Pantar. Aliases are also used by the page's search box.",
+  "groups": [
+    { "id": "an-central-timor", "family": "an", "en": "Austronesian – Central Timor", "tet": "Austronésia – Timor Klaran" },
+    { "id": "an-timor-babar", "family": "an", "en": "Austronesian – Timor-Babar", "tet": "Austronésia – Timor-Babar" },
+    { "id": "tap", "family": "tap", "en": "Non-Austronesian (Timor-Alor-Pantar)", "tet": "La'ós Austronésia (Timor-Alor-Pantar)" },
+    { "id": "other", "family": "other", "en": "Other", "tet": "Seluk" }
+  ],
+  "languages": [
+    { "name": "Mambae", "group": "an-central-timor", "iso": "mgm", "glottocode": "mamb1306", "aliases": ["Mambai", "Mambae"] },
+    { "name": "Kemak", "group": "an-central-timor", "iso": "kem", "glottocode": "kema1243", "aliases": [] },
+    { "name": "Tokodede", "group": "an-central-timor", "iso": "tkd", "glottocode": "tuku1254", "aliases": ["Tukudede"] },
+    { "name": "Welaun", "group": "an-central-timor", "iso": "wlh", "glottocode": "wela1235", "aliases": [] },
+
+    { "name": "Waima'a", "group": "an-timor-babar", "iso": "wmh", "glottocode": "waim1252", "aliases": ["Waimaa", "Waimoa", "Waimaha", "Waima’a"] },
+    { "name": "Naueti", "group": "an-timor-babar", "iso": "nxa", "glottocode": "naue1237", "aliases": ["Nauete"] },
+    { "name": "Kairui-Midiki", "group": "an-timor-babar", "iso": "krd", "glottocode": "kair1265", "aliases": ["Kairui", "Midiki"] },
+    { "name": "Tetun", "group": "an-timor-babar", "iso": "tet", "glottocode": "tetu1245", "aliases": ["Tetum"] },
+    { "name": "Tetun Dili", "group": "an-timor-babar", "iso": "tdt", "glottocode": "tetu1246", "aliases": ["Tetun Prasa", "Tetum Prasa"] },
+    { "name": "Tetun Terik", "group": "an-timor-babar", "iso": "tet", "glottocode": "tetu1245", "aliases": ["Tetum Terik"] },
+    { "name": "Tetun Fehan", "group": "an-timor-babar", "iso": "tet", "glottocode": "tetu1245", "aliases": ["Fehan", "Tetum Fehan"] },
+    { "name": "Habun", "group": "an-timor-babar", "iso": "hbu", "glottocode": "habu1241", "aliases": ["Habu"] },
+    { "name": "Idaté", "group": "an-timor-babar", "iso": "idt", "glottocode": "idat1237", "aliases": ["Idate"] },
+    { "name": "Lakalei", "group": "an-timor-babar", "iso": "lka", "glottocode": "laka1255", "aliases": [] },
+    { "name": "Galolen", "group": "an-timor-babar", "iso": "gal", "glottocode": "galo1243", "aliases": ["Galoli"] },
+    { "name": "Dadu'a", "group": "an-timor-babar", "iso": null, "glottocode": "dadu1237", "aliases": ["Dadua", "Dadu’a"] },
+    { "name": "Atauran", "group": "an-timor-babar", "iso": null, "glottocode": null, "aliases": ["Atauro", "Rahesuk", "Resuk", "Hresuk", "Raklungu"] },
+    { "name": "Makuva", "group": "an-timor-babar", "iso": "lva", "glottocode": "maku1277", "aliases": ["Maku'a", "Lovaia"] },
+    { "name": "Baikeno", "group": "an-timor-babar", "iso": "aoz", "glottocode": "uabm1237", "aliases": ["Meto", "Uab Meto", "Dawan"] },
+
+    { "name": "Bunaq", "group": "tap", "iso": "bfn", "glottocode": "buna1278", "aliases": ["Bunak"] },
+    { "name": "Makasae", "group": "tap", "iso": "mkz", "glottocode": "maka1316", "aliases": ["Makasai"] },
+    { "name": "Makalero", "group": "tap", "iso": "mkz", "glottocode": "maka1316", "aliases": [] },
+    { "name": "Fataluku", "group": "tap", "iso": "ddg", "glottocode": "fata1247", "aliases": [] }
+  ]
+}

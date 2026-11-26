@@ -409,6 +409,164 @@ main {
   margin-bottom: 0.4rem;
 }
 
+/* -------------------- Zotero bibliography (/bibliography/) --------------------
+   Deliberately plain, in the spirit of ALT's Grammar Watch: one column, quiet
+   labels, a flat hanging-indent reference list. */
+
+.bib-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.6rem 1.4rem;
+  margin: 1.8rem 0 0;
+}
+
+.bib-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.bib-search {
+  flex: 1 1 100%;
+}
+
+.bib-filter-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.bib-filter input,
+.bib-filter select {
+  font: inherit;
+  color: var(--color-text);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--color-border);
+  border-radius: 0;
+  padding: 0.3rem 0;
+  min-width: 0;
+}
+
+.bib-filter input {
+  width: 100%;
+  font-size: 1rem;
+  border-bottom-color: var(--color-text-muted);
+}
+
+.bib-filter select {
+  font-size: 0.9rem;
+  max-width: 100%;
+  cursor: pointer;
+}
+
+.bib-filter input:focus,
+.bib-filter select:focus {
+  outline: none;
+  border-bottom-color: var(--color-accent);
+  box-shadow: 0 1px 0 var(--color-accent);
+}
+
+.bib-count {
+  flex: 1 1 100%;
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.bib-jump {
+  margin: 1.6rem 0 0.5rem;
+  font-size: 0.92rem;
+}
+
+.bib-jump-row {
+  margin: 0 0 0.35rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem 0.9rem;
+  align-items: baseline;
+}
+
+.bib-jump-label {
+  color: var(--color-text-muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-right: 0.2rem;
+}
+
+.bib-empty {
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.bib-family {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin: 2.6rem 0 0;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.bib-section {
+  margin-top: 1.4rem;
+}
+
+.bib-lang {
+  font-size: 1.3rem;
+  margin: 0 0 0.6rem;
+}
+
+.bib-codes {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--color-text-muted);
+  margin-left: 0.5rem;
+  white-space: nowrap;
+}
+
+.bib-codes abbr {
+  text-decoration: none;
+}
+
+.bib-entry {
+  margin: 0 0 0.6rem;
+  padding-left: 1.6em;
+  text-indent: -1.6em;
+}
+
+.bib-entry a {
+  overflow-wrap: anywhere;
+}
+
+.bib-cite {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.bib-cite:hover {
+  color: var(--color-accent);
+}
+
+.bib-updated {
+  margin-top: 2.5rem;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+[hidden] {
+  display: none !important;
+}
+
 /* -------------------- Fieldwork gallery -------------------- */
 
 .gallery {

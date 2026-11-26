@@ -31,7 +31,12 @@ research/index.html        Research             → /research/
 publications/index.html    Publications         → /publications/
 teaching/index.html        Teaching             → /teaching/
 fieldwork/index.html       Fieldwork & Media    → /fieldwork/
-resources/index.html       Language bibliography → /resources/
+resources/index.html       Language bibliography (hand-written, older; not
+                             in nav) → /resources/
+bibliography/index.html    Zotero-generated bibliography → /bibliography/
+                             (GENERATED — see "Bibliography" below)
+scripts/                   Bibliography build script, template, language map
+.github/workflows/         Nightly bibliography rebuild
 owens_edwards_map.html     Interactive language-family map (not in nav,
                              direct URL only, self-contained)
 census-maps/index.html     Interactive 2022 census mother-tongue map (not in
@@ -52,6 +57,69 @@ subpages) — no server config needed. A hidden/unlisted page (like
 `census-maps/` or `owens_edwards_map.html`) follows the opposite pattern:
 no nav link, `<meta name="robots" content="noindex">`, and left out of
 `sitemap.xml`.
+
+## Bibliography (`bibliography/`)
+
+A bibliography of research on the languages of Timor-Leste, generated from
+the public Zotero group library **tl-languages** (group ID `6780048`,
+https://www.zotero.org/groups/6780048). Modeled on ALT's Grammar Watch,
+which does the same thing with the ZotPress WordPress plugin; this site
+does it at build time instead, so the page is plain static HTML (fast,
+indexable, works without JS).
+
+**Do not edit `bibliography/index.html` by hand** — it is overwritten on
+every build. Change the Zotero library (entries) or the files in
+`scripts/` (page text, layout, language metadata).
+
+How it works:
+
+- `scripts/build_bibliography.py` (Python 3, standard library only) pulls
+  all collections and top-level items from the Zotero Web API (public
+  group, no API key), with citations pre-formatted by Zotero in the
+  `unified-style-sheet-for-linguistics` CSL style plus COinS metadata (so
+  visitors with the Zotero browser extension can save entries). It fills
+  `scripts/bibliography-template.html` and writes `bibliography/index.html`
+  only if the result changed.
+- `.github/workflows/bibliography.yml` runs it daily (~04:17 HST), on
+  demand (Actions tab → "Build bibliography" → Run workflow), and whenever
+  one of the `scripts/` files changes on `main`. It commits only when the
+  page changed, then requests a Pages build (pushes made by the workflow
+  token don't reliably trigger one by themselves).
+- `assets/js/bibliography.js` adds the search box and filters; the page is
+  fully readable without it.
+- Run locally: `python3 scripts/build_bibliography.py`, then preview.
+- "Last updated" is the newest `dateModified` in the library, not the build
+  time, so nightly runs with no Zotero changes produce no commit.
+
+Zotero library conventions the script depends on:
+
+- **Top-level collection `Languages`**: each subcollection (at any depth)
+  becomes a language section. Items can sit in several collections; the
+  `Languages` collection itself is never rendered.
+- **Any other top-level collection** (e.g. `Comparative and areal`,
+  `Language situation`, currently `Grammars`) becomes a section under
+  "General and comparative".
+- **Tags**: only prefixed tags are shown and filterable —
+  `type:` (grammar, sketch, dictionary, wordlist, texts, archive deposit,
+  pedagogical), `in:` (language the work is written in), `topic:`. All
+  other tags (`read`, `in-progress`, …) are ignored by the page, **but are
+  still public in the group library**.
+- **`scripts/tl-languages.json`** maps collection names (and aliases) to
+  family/subgroup, ISO 639-3 and Glottocode, and sets section order.
+  Aliases also feed the search box (so "Waimoa" finds Waima'a). A
+  collection missing from this file still appears, under "Other", with a
+  warning in the build log — add it to the JSON to fix.
+- Citation text is exactly what Zotero's CSL formatter produces, so fix
+  formatting problems (title case, name particles like "van", missing
+  pages/publisher) in the Zotero record, not in the HTML.
+
+Status: not yet linked from the nav or in `sitemap.xml`; `/resources/`
+(the older hand-written list, with entries not yet in Zotero) is still
+live. Plan: move its remaining entries into Zotero, then replace or
+redirect `/resources/` to `/bibliography/` and add a nav link. Tetun
+strings marked "[Tradusaun Tetun sei mai …]" in the template still need
+translating, and the short Tetun UI labels (Buka, Tipu rekursu, Hakerek
+iha, Tópiku, …) need a check.
 
 ## Census maps page (`census-maps/`)
 

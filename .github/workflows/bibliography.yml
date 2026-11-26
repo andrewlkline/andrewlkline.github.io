@@ -1,0 +1,51 @@
+name: Build bibliography
+
+# Rebuilds bibliography/index.html from the public Zotero group library
+# (scripts/build_bibliography.py) and commits it only if something changed.
+on:
+  schedule:
+    - cron: "17 14 * * *" # daily, ~04:17 in Hawaiʻi
+  workflow_dispatch: # "Run workflow" button on the Actions tab
+  push:
+    branches: [main]
+    paths:
+      - scripts/build_bibliography.py
+      - scripts/tl-languages.json
+      - scripts/bibliography-template.html
+
+permissions:
+  contents: write # commit the regenerated page
+  pages: write # request a Pages rebuild after committing
+
+concurrency:
+  group: bibliography
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build page from Zotero
+        run: python3 scripts/build_bibliography.py
+
+      - name: Commit and publish if changed
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if git diff --quiet -- bibliography/ && [ -z "$(git ls-files --others --exclude-standard bibliography/)" ]; then
+            echo "No changes to the bibliography."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add bibliography/
+          git commit -m "Update bibliography from Zotero"
+          git push
+          # Pushes made with the workflow token may not trigger a Pages build on their own.
+          gh api -X POST "repos/${GITHUB_REPOSITORY}/pages/builds" || echo "Could not request a Pages build; it may still build from the push."
