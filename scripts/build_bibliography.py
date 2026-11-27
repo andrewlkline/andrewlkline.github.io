@@ -159,6 +159,21 @@ def csl_entry(bib):
     return (m.group(1) if m else bib).strip()
 
 
+def strip_access_date(citation, access_date):
+    """Remove the ' (22 April, 2024).' access date the CSL style appends.
+
+    Only the item's own Zotero accessDate is removed, so publication dates
+    such as '2019, September 25' are never touched.
+    """
+    m = re.match(r"(\d{4})-(\d{2})-(\d{2})", access_date or "")
+    if not m:
+        return citation
+    y, mo, d = int(m.group(1)), int(m.group(2)), int(m.group(3))
+    month = datetime.date(y, mo, 1).strftime("%B")
+    pattern = r"\s*\(\s*%d\s+%s,?\s+%d\s*\)\.?" % (d, month, y)
+    return re.sub(pattern, "", citation)
+
+
 def facet_label(facet, value):
     if facet == "type":
         return TYPE_TAG_LABELS.get(value, value.capitalize())
@@ -251,8 +266,8 @@ def build():
     def render_entry(it, families, search_extra):
         d = it["data"]
         facets = item_facets(it)
-        citation = linkify(csl_entry(it.get("bib", "")))
-        search = " ".join([strip_tags(citation), d.get("abstractNote", ""),
+        citation = linkify(strip_access_date(csl_entry(it.get("bib", "")), d.get("accessDate")))
+        search =" ".join([strip_tags(citation), d.get("abstractNote", ""),
                            ITEM_TYPE_LABELS.get(d["itemType"], d["itemType"])] + search_extra +
                           [facet_label(f, v) for f in FACETS for v in facets[f]]).lower()
         attrs = {
@@ -304,9 +319,12 @@ def build():
             bits = []
             if meta.get("iso"):
                 bits.append('<abbr title="ISO 639-3">%s</abbr>' % esc(meta["iso"]))
-            if meta.get("glottocode"):
+            codes_list = meta.get("glottocode") or []
+            if isinstance(codes_list, str):
+                codes_list = [codes_list]
+            for gc in codes_list:
                 bits.append('<a href="https://glottolog.org/resource/languoid/id/%s" target="_blank" rel="noopener" title="Glottolog">%s</a>'
-                            % (esc(meta["glottocode"]), esc(meta["glottocode"])))
+                            % (esc(gc), esc(gc)))
             if bits:
                 codes = ' <span class="bib-codes">%s</span>' % " · ".join(bits)
         out.append('      <section class="bib-section" id="%s">\n'

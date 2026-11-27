@@ -1,5 +1,5 @@
 {
-  "_comment": "Maps Zotero collection names (under the top-level 'Languages' collection) to display metadata. Matching is case-insensitive against 'name' and every entry in 'aliases'. Order here is the order sections appear on the page. Codes checked against Glottolog 2026-11-26. family: 'an' = Austronesian, 'tap' = Timor-Alor-Pantar. Aliases are also used by the page's search box.",
+  "_comment": "Maps Zotero collection names (under the top-level 'Languages' collection) to display metadata. Matching is case-insensitive against 'name' and every entry in 'aliases'. Order here is the order sections appear on the page. Codes checked against Glottolog 2026-11-26 (Makalero and Atauran corrected 2026-11-27). 'glottocode' may be a single code or a list (Atauran: Rasua, Hresuk, Raklungu; its older code adab1235 is marked spurious in Glottolog, so it is deliberately not used). Makalero has its own ISO code (mjb) and Glottocode (makl1245, listed by Glottolog as a dialect of Makasae-Makalero), so it does not share Makasae's mkz/maka1316. family: 'an' = Austronesian, 'tap' = Timor-Alor-Pantar. Aliases are also used by the page's search box.",
   "groups": [
     { "id": "an-central-timor", "family": "an", "en": "Austronesian – Central Timor", "tet": "Austronésia – Timor Klaran" },
     { "id": "an-timor-babar", "family": "an", "en": "Austronesian – Timor-Babar", "tet": "Austronésia – Timor-Babar" },
@@ -24,13 +24,13 @@
     { "name": "Lakalei", "group": "an-timor-babar", "iso": "lka", "glottocode": "laka1255", "aliases": [] },
     { "name": "Galolen", "group": "an-timor-babar", "iso": "gal", "glottocode": "galo1243", "aliases": ["Galoli"] },
     { "name": "Dadu'a", "group": "an-timor-babar", "iso": null, "glottocode": "dadu1237", "aliases": ["Dadua", "Dadu’a"] },
-    { "name": "Atauran", "group": "an-timor-babar", "iso": null, "glottocode": null, "aliases": ["Atauro", "Rahesuk", "Resuk", "Hresuk", "Raklungu"] },
+    { "name": "Atauran", "group": "an-timor-babar", "iso": "adb", "glottocode": ["rasu1239", "haha1243", "rakl1234"], "aliases": ["Atauro", "Rasua", "Rahesuk", "Resuk", "Hresuk", "Raklungu", "Adabe"] },
     { "name": "Makuva", "group": "an-timor-babar", "iso": "lva", "glottocode": "maku1277", "aliases": ["Maku'a", "Lovaia"] },
     { "name": "Baikeno", "group": "an-timor-babar", "iso": "aoz", "glottocode": "uabm1237", "aliases": ["Meto", "Uab Meto", "Dawan"] },
 
     { "name": "Bunaq", "group": "tap", "iso": "bfn", "glottocode": "buna1278", "aliases": ["Bunak"] },
     { "name": "Makasae", "group": "tap", "iso": "mkz", "glottocode": "maka1316", "aliases": ["Makasai"] },
-    { "name": "Makalero", "group": "tap", "iso": "mkz", "glottocode": "maka1316", "aliases": [] },
+    { "name": "Makalero", "group": "tap", "iso": "mjb", "glottocode": "makl1245", "aliases": ["Maklere"] },
     { "name": "Fataluku", "group": "tap", "iso": "ddg", "glottocode": "fata1247", "aliases": [] }
   ]
 }

@@ -530,6 +530,10 @@ main {
   font-weight: 400;
   color: var(--color-text-muted);
   margin-left: 0.5rem;
+}
+
+.bib-codes a,
+.bib-codes abbr {
   white-space: nowrap;
 }
 

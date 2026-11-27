@@ -109,9 +109,15 @@ Zotero library conventions the script depends on:
   Aliases also feed the search box (so "Waimoa" finds Waima'a). A
   collection missing from this file still appears, under "Other", with a
   warning in the build log — add it to the JSON to fix.
-- Citation text is exactly what Zotero's CSL formatter produces, so fix
+- Citation text is what Zotero's CSL formatter produces, so fix
   formatting problems (title case, name particles like "van", missing
-  pages/publisher) in the Zotero record, not in the HTML.
+  pages/publisher) in the Zotero record, not in the HTML. One exception:
+  the style appends the record's "Accessed" date as " (22 April, 2024).";
+  the build strips exactly that date (`strip_access_date`), so access
+  dates can stay filled in Zotero without showing on the page.
+- `glottocode` in `tl-languages.json` may be a list (Atauran has three:
+  Rasua, Hresuk, Raklungu; the spurious `adab1235` is deliberately not
+  used). Makalero has its own codes (`mjb`, `makl1245`), not Makasae's.
 
 Status: not yet linked from the nav or in `sitemap.xml`; `/resources/`
 (the older hand-written list, with entries not yet in Zotero) is still
