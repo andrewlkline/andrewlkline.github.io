@@ -119,10 +119,12 @@ Zotero library conventions the script depends on:
   Rasua, Hresuk, Raklungu; the spurious `adab1235` is deliberately not
   used). Makalero has its own codes (`mjb`, `makl1245`), not Makasae's.
 
-Status: not yet linked from the nav or in `sitemap.xml`; `/resources/`
-(the older hand-written list, with entries not yet in Zotero) is still
-live. Plan: move its remaining entries into Zotero, then replace or
-redirect `/resources/` to `/bibliography/` and add a nav link. Tetun
+Status: linked in the nav ("Bibliography" / "Bibliografia", after
+Teaching, on every page and in the template) and listed in
+`sitemap.xml`. `/resources/` (the older hand-written list, with entries
+not yet in Zotero) is still live but unlinked. Plan: move its remaining
+entries into Zotero, then replace or redirect `/resources/` to
+`/bibliography/`. Tetun
 strings marked "[Tradusaun Tetun sei mai …]" in the template still need
 translating, and the short Tetun UI labels (Buka, Tipu rekursu, Hakerek
 iha, Tópiku, …) need a check.
