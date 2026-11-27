@@ -29,7 +29,7 @@ clean URLs with no `.html` — GitHub Pages (and most static hosts) serve
 index.html                Home / About        → /
 research/index.html        Research             → /research/
 publications/index.html    Publications         → /publications/
-teaching/index.html        Teaching             → /teaching/
+teaching/index.html        Teaching (not in nav; page still live) → /teaching/
 fieldwork/index.html       Fieldwork & Media    → /fieldwork/
 resources/index.html       Language bibliography (hand-written, older; not
                              in nav) → /resources/
@@ -119,8 +119,8 @@ Zotero library conventions the script depends on:
   Rasua, Hresuk, Raklungu; the spurious `adab1235` is deliberately not
   used). Makalero has its own codes (`mjb`, `makl1245`), not Makasae's.
 
-Status: linked in the nav ("Bibliography" / "Bibliografia", after
-Teaching, on every page and in the template) and listed in
+Status: linked in the nav ("TL Bibliography" / "Bibliografia TL", after
+Publications, on every page and in the template) and listed in
 `sitemap.xml`. `/resources/` (the older hand-written list, with entries
 not yet in Zotero) is still live but unlinked. Plan: move its remaining
 entries into Zotero, then replace or redirect `/resources/` to
