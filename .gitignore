@@ -6,3 +6,6 @@
 /*.JPG
 /*.jpeg
 /Screenshot *.png
+
+# Local Claude Code config (preview server etc.) -- never publish.
+/.claude/
