@@ -8,7 +8,7 @@ Standard library only (runs locally and in GitHub Actions). Reads:
   scripts/bibliography-template.html  page shell with {{PLACEHOLDERS}}
 Writes bibliography/index.html only when its contents change.
 
-Library conventions (see README):
+Library conventions:
   * Top-level collection "Languages": each subcollection becomes a language section.
   * Any other top-level collection (and its subcollections) becomes a section after
     the languages, e.g. "Comparative and areal", "Language situation".
